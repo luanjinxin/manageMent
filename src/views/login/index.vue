@@ -54,7 +54,6 @@
 <script>
 import router from '../../router'
 import store from '../../store'
-import { async } from 'q'
 export default {
   name: 'Login',
   data() {

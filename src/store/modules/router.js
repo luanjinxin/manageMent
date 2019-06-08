@@ -25,6 +25,7 @@ export function recursionRouter(menus) {
     if (menu.children && menu.children.length > 0) {
       router.children = recursionRouter(menu.children)
     }
+    console.log(router)
     dynamicRouters.push(router)
   })
   return dynamicRouters
