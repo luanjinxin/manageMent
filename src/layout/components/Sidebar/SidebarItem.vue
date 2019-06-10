@@ -8,17 +8,16 @@
           :index="resolvePath(onlyOneChild.path)"
           :class="{'submenu-title-noDropdown':!isNest}"
         >
-          <item
-            :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"
-            :title="onlyOneChild.meta.title"
-          />
+          <i :class="item.meta.icon" />
+          <item :title="onlyOneChild.meta.title" />
         </el-menu-item>
       </app-link>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <i :class="item.meta.icon" />
+        <item v-if="item.meta" :title="item.meta.title" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -106,5 +105,17 @@ export default {
   position: relative;
   margin-top: 0px;
   border-top: 0px solid #ebeef5;
+}
+.el-submenu__title i {
+  color: rgb(191, 203, 217);
+}
+.el-menu-item i {
+  color: rgb(191, 203, 217);
+}
+.el-menu-item [class^="el-icon-"] {
+  margin-left: 13px;
+}
+.el-submenu [class^=el-icon-] {
+    margin-left: 13px;
 }
 </style>

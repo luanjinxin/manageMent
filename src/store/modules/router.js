@@ -12,20 +12,19 @@ export function recursionRouter(menus) {
       router.path = `/${menu.menueUrl}`
       router.component = Layout
       router.meta.title = menu.menueName
-      router.meta.icon = menu.icon_view
+      router.meta.icon = menu.ico_view
       //  router.meta.resources = menu.resources
     } else {
       router.path = menu.menueUrl
       router.component = () => import(`@/views/${menu.menuePath}`)
       router.meta.title = menu.menueName
-      router.meta.icon = menu.icon_view
+      router.meta.icon = menu.ico_view
       //  router.meta.resources = menu.resources
     }
     // 有子路由
     if (menu.children && menu.children.length > 0) {
       router.children = recursionRouter(menu.children)
     }
-    console.log(router)
     dynamicRouters.push(router)
   })
   return dynamicRouters

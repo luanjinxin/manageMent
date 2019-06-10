@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -6,7 +6,8 @@ const state = {
   token: getToken(),
   name: '',
   avatar: '',
-  router: ''
+  router: '',
+  buttons: []
 }
 
 const mutations = {
@@ -21,6 +22,9 @@ const mutations = {
   },
   SET_Router: (state, router) => {
     state.router = router
+  },
+  SET_Buttons: (state, buttons) => {
+    state.buttons = buttons
   }
 }
 
@@ -51,6 +55,7 @@ const actions = {
           //  console.log(JSON.stringify(data.content.menue))
           commit('SET_Router', data.content.menue)
           commit('SET_NAME', data.content.userName)
+          commit('SET_Buttons', data.content.buttons)
           resolve()
         })
         .catch(error => {
