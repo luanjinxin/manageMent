@@ -6,9 +6,10 @@
       class="login-form"
       auto-complete="on"
       label-position="left"
+      :rules="loginRules"
     >
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">登陆</h3>
       </div>
 
       <el-form-item prop="username">
@@ -58,6 +59,8 @@ export default {
   name: 'Login',
   data() {
     return {
+      loginRules: { username: { required: true, message: '用户名不能为空', trigger: 'blur' },
+        password: { required: true, message: '用户名不能为空', trigger: 'blur' } },
       loginForm: {
         username: '',
         password: ''
@@ -75,13 +78,16 @@ export default {
   },
   methods: {
     handleLogin() {
-      this.loading = true
-      this.$store.dispatch('user/login', this.loginForm).then(async() => {
-        await store.dispatch('user/getInfo')
-        await store.dispatch('router/generateRouters', store.getters.router)
-        router.addRoutes(store.getters.dynamicRouters)
-        this.$router.push({ path: this.redirect || '/' })
-        this.loading = false
+      this.$refs.loginForm.validate(async valid => {
+        if (valid) {
+          await this.$store.dispatch('user/login', this.loginForm)
+          // 第一次登陆初始化一下路由侧边栏
+          await store.dispatch('user/getInfo')
+          await store.dispatch('router/generateRouters', store.getters.router)
+          // 动态添加路由
+          router.addRoutes(store.getters.dynamicRouters)
+          this.$router.push({ path: this.redirect || '/' })
+        }
       })
     }
   }
@@ -89,9 +95,6 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;

@@ -4,22 +4,24 @@ export function recursionRouter(menus) {
   const dynamicRouters = []
   menus.forEach(menu => {
     const router = {
-      // vue缓存组件使用，保证唯一性，并且和组件名一致。暂时乱写。。。
       name: `${menu.menueUrl}`,
       meta: {}
     }
     if (menu.menuePid === 0) {
       router.path = `/${menu.menueUrl}`
       router.component = Layout
+      router.name = menu.menueName
       router.meta.title = menu.menueName
       router.meta.icon = menu.ico_view
-      //  router.meta.resources = menu.resources
+      menu.menuePath === 'dashboard'
+        ? ''
+        : (router.redirect = `/${menu.menuePath}`)
     } else {
       router.path = menu.menueUrl
       router.component = () => import(`@/views/${menu.menuePath}`)
       router.meta.title = menu.menueName
       router.meta.icon = menu.ico_view
-      //  router.meta.resources = menu.resources
+      router.name = menu.menueName
     }
     // 有子路由
     if (menu.children && menu.children.length > 0) {

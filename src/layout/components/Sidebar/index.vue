@@ -53,9 +53,6 @@ export default {
     isCollapse() {
       return !this.sidebar.opened
     }
-  },
-  created() {
-    console.log('1111' + JSON.stringify(this.fullRouters))
   }
 }
 </script>

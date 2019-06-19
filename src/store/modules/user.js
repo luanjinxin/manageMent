@@ -36,7 +36,7 @@ const actions = {
       login({ loginName: username.trim(), loginPwd: password })
         .then(response => {
           const data = response
-          console.log(response + '111111')
+
           commit('SET_TOKEN', data.token)
           setToken(data.token)
           resolve()
@@ -52,7 +52,6 @@ const actions = {
       getInfo(state.token)
         .then(response => {
           const data = response
-          //  console.log(JSON.stringify(data.content.menue))
           commit('SET_Router', data.content.menue)
           commit('SET_NAME', data.content.userName)
           commit('SET_Buttons', data.content.buttons)
