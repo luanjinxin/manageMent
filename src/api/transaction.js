@@ -6,3 +6,17 @@ export function getGroupInfo(data) {
     data
   })
 }
+export function getOrder(data) {
+  return request({
+    url: '/getOrder',
+    method: 'post',
+    data
+  })
+}
+export function getUserInfoByMobile(data) {
+  return request({
+    url: '/getUserInfoByMobile',
+    method: 'post',
+    data
+  })
+}

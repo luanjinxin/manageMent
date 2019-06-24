@@ -9,6 +9,7 @@ export function recursionRouter(menus) {
       meta: {}
     }
     if (menu.menuePid === 0) {
+      router.name = menu.menueName
       router.path = `/${menu.menueUrl}`
       router.component = Layout
       router.meta.title = menu.menueName

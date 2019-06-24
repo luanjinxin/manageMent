@@ -8,15 +8,16 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="batch_name" label="优惠券名称" width="180" />
-      <el-table-column prop="create_time" label="创建时间" width="180" />
-      <el-table-column prop="start_time" label="结束时间" width="180" />
-      <el-table-column prop="create_user" label="创建人" width="180" />
-      <el-table-column prop="remark" label="使用规则" width="180" />
-      <el-table-column prop="limit_price" label="使用金额" width="180" />
-      <el-table-column prop="send_num" label="发券数量" width="180" />
-      <el-table-column prop="remind_num" label="剩余数量" width="180" />
-      <el-table-column prop="city" label="发放城市" />
+      <el-table-column align="center" prop="batch_name" label="优惠券名称" width="180" />
+      <el-table-column align="center" prop="create_time" label="创建时间" width="120" />
+      <el-table-column align="center" prop="end_time" label="结束时间" width="120" />
+      <el-table-column align="center" prop="create_user" label="创建人" width="150" />
+      <el-table-column show-overflow-tooltip align="center" prop="remark" label="使用规则" />
+      <el-table-column align="center" prop="limit_price" label="使用金额" width="120" />
+      <el-table-column align="center" prop="price" label="券金额" width="120" />
+      <el-table-column align="center" prop="send_num" label="发券数量" width="120" />
+      <el-table-column align="center" prop="remind_num" label="剩余数量" width="100" />
+      <el-table-column align="center" prop="city" label="发放城市" width="100" />
     </el-table>
     <pagination
       v-show="pageCount>0"
@@ -84,6 +85,12 @@ export default {
         isGetNow: this.isGetNow
       }
       getCoupon(data).then(res => {
+        res.content.coupons.map(item => {
+          item.create_time = item.create_time.substring(0, 10)
+          item.end_time = item.end_time.substring(0, 10)
+          item.limit_price = (item.limit_price / 100).toFixed(2)
+          item.price = (item.price / 100).toFixed(2)
+        })
         this.tableData = res.content.coupons
         this.pageNumber = res.page.pageNumber
         this.pageCount = res.page.pageCount
