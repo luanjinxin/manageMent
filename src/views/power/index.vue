@@ -19,19 +19,19 @@
       <el-form>
         <el-form-item label="名称:" :label-width="'50px'">
           <el-input v-model="search" style="width:150px" size="small" autocomplete="off" />&nbsp;&nbsp;
-          <el-button size="small" @click="getPowerByPid(menuePid)" type="primary">查询</el-button>
+          <el-button size="small" type="primary" @click="getPowerByPid(menuePid)">查询</el-button>
           <el-button v-if="hasButton('role:add')" size="small" type="primary" @click="addPower">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="menueId" label="权限id" width="130" />
-        <el-table-column prop="menueName" label="名称" width="130" />
-        <el-table-column prop="menueType" label="类型" width="130" />
-        <el-table-column prop="ico_view" label="图标" width="130" />
-        <el-table-column prop="menueAction" label="按钮名称" width="130" />
-        <el-table-column prop="menuePath" label="路由地址" width="130" />
-        <el-table-column prop="menueUrl" label="path" />
-        <el-table-column fixed="right" label="操作" width="150">
+        <el-table-column align="center" prop="menueId" label="权限id" width="130" />
+        <el-table-column align="center" prop="menueName" label="名称" width="130" />
+        <el-table-column align="center" prop="menueType" label="类型" width="130" />
+        <el-table-column align="center" prop="ico_view" label="图标" width="130" />
+        <el-table-column align="center" prop="menueAction" label="按钮名称" width="130" />
+        <el-table-column align="center" prop="menuePath" label="路由地址" width="130" />
+        <el-table-column align="center" prop="menueUrl" label="path" />
+        <el-table-column align="center" fixed="right" label="操作" width="150">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="editPower(scope.row)">编辑</el-button>
             <el-button type="text" size="small" @click="deleteMenue(scope.row)">删除</el-button>
@@ -136,20 +136,19 @@ export default {
       this.title = '新增权限'
       this.dialogFormVisible = true
     },
-    addPowerRole() {
-      var data = {
+    async  addPowerRole() {
+      const data = {
         menuePid: this.menuePid
       }
-      addPower(Object.assign(data, this.form)).then(res => {
-        if (res.status === '0') {
-          this.$message({
-            type: 'info',
-            message: '新增成功'
-          })
-          this.dialogFormVisible = false
-          this.getPowerByPid(this.menuePid)
-        }
-      })
+      const res = await addPower(Object.assign(data, this.form))
+      if (res.message === '成功') {
+        this.$message({
+          type: 'info',
+          message: '新增成功'
+        })
+        this.dialogFormVisible = false
+        this.getPowerByPid(this.menuePid)
+      }
     },
     editPower(a) {
       this.title = '编辑权限'
@@ -166,27 +165,28 @@ export default {
         this.data2[0].children = res.content.menue
       })
     },
-    getPowerByPid(pid) {
-      var data = {
+    async  getPowerByPid(pid) {
+      const data = {
         pid: pid,
         pageSize: this.pageSize,
         pageNumber: this.pageNumber,
         menueName: this.search
       }
-      getPowerByPid(data).then(res => {
+      const res = await getPowerByPid(data)
+      if (res.message === '成功') {
         this.tableData = res.content
         this.pageNumber = res.page.pageNumber
         this.pageCount = res.page.pageCount
-      })
+      }
     },
-    getPowerByid(id) {
-      var data = {
+    async getPowerByid(id) {
+      const data = {
         id: id
       }
-      getPowerByid(data).then(res => {
+      const res = await getPowerByid(data)
+      if (res.message === '成功') {
         this.form = res.content[0]
-        console.log(JSON.stringify(this.form))
-      })
+      }
     },
     sure() {
       if (this.title === '编辑权限') {
@@ -195,41 +195,38 @@ export default {
         this.addPowerRole()
       }
     },
-    updataPowerByid() {
-      var data = {
+    async  updataPowerByid() {
+      const data = {
         id: this.menueId
       }
-      updataPowerByid(Object.assign(data, this.form)).then(res => {
+      const res = await updataPowerByid(Object.assign(data, this.form))
+      if (res.message === '成功') {
         this.dialogFormVisible = false
-        if (res.status === '0') {
-          this.$message({
-            type: 'info',
-            message: '更新成功'
-          })
-          this.getPowerByPid(this.menuePid)
-        }
-      })
+        this.$message({
+          type: 'info',
+          message: '更新成功'
+        })
+        this.getPowerByPid(this.menuePid)
+      }
     },
-    deleteMenue(menueId) {
-      this.$confirm('删除后不可恢复是否删除？', '确认信息', {
+    async  deleteMenue(menueId) {
+      await this.$confirm('删除后不可恢复是否删除？', '确认信息', {
         distinguishCancelAndClose: true,
         confirmButtonText: '删除',
         cancelButtonText: '取消'
       })
-        .then(() => {
-          var data = {
-            menueId: menueId.menueId
-          }
-          deletePowerByid(data).then(res => {
-            if (res.status === '0') {
-              this.$message({
-                type: 'info',
-                message: '删除成功'
-              })
-              this.getPowerByPid(this.menuePid)
-            }
-          })
+
+      const data = {
+        menueId: menueId.menueId
+      }
+      const res = deletePowerByid(data)
+      if (res.message === '成功') {
+        this.$message({
+          type: 'info',
+          message: '删除成功'
         })
+        this.getPowerByPid(this.menuePid)
+      }
     },
     filterNode(value, data) {
       if (!value) return true

@@ -53,7 +53,10 @@ const actions = {
         .then(response => {
           const data = response
           commit('SET_Router', data.content.menue)
-          commit('SET_NAME', data.content.userName)
+          commit(
+            'SET_NAME',
+            `${data.content.role[0].roleName}-${data.content.userName}`
+          )
           commit('SET_Buttons', data.content.buttons)
           resolve()
         })
