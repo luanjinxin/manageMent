@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import router from '../router'
 
 // create an axios instance
@@ -52,13 +52,14 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === '950') {
+      if (res.status === '950') {
         // to re-login
         MessageBox.confirm('登录超时', {
-          confirmButtonText: 'Re-Login',
+          confirmButtonText: '去登录',
           cancelButtonText: '关闭',
           type: 'warning'
         }).then(() => {
+          removeToken()
           router.push('/login')
         })
       }

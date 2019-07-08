@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      title: '权限管理系统',
+      title: 'blog管理系统',
       logo: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1882576949,1507167761&fm=26&gp=0.jpg'
     }
   }

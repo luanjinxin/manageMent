@@ -3,7 +3,12 @@
     <el-form>
       <el-form-item label="名称:" :label-width="'50px'">
         <el-input v-model="search" style="width:150px" size="small" autocomplete="off" />&nbsp;&nbsp;
-        <el-button size="small" type="primary" @click="getPowerByRoleName()">查询</el-button>
+        <el-button
+          v-if="hasButton('role:select')"
+          size="small"
+          type="primary"
+          @click="getPowerByRoleName()"
+        >查询</el-button>
         <el-button v-if="hasButton('role:add')" size="small" type="primary" @click="addRole">新增</el-button>
       </el-form-item>
     </el-form>
@@ -12,10 +17,30 @@
       <el-table-column align="center" prop="roleName" label="角色名称" width="430" />
       <el-table-column align="center" fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="editRole(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="getRoleByid(scope.row)">查询权限</el-button>
-          <el-button type="text" size="small" @click="editRoleByid(scope.row)">编辑权限</el-button>
-          <el-button type="text" size="small" @click="deleteRoleByid(scope.row)">删除</el-button>
+          <el-button
+            v-if="hasButton('role:edit')"
+            type="text"
+            size="small"
+            @click="editRole(scope.row)"
+          >编辑</el-button>
+          <el-button
+            v-if="hasButton('role:getPower')"
+            type="text"
+            size="small"
+            @click="getRoleByid(scope.row)"
+          >查询权限</el-button>
+          <el-button
+            v-if="hasButton('role:editPower')"
+            type="text"
+            size="small"
+            @click="editRoleByid(scope.row)"
+          >编辑权限</el-button>
+          <el-button
+            v-if="hasButton('role:del')"
+            type="text"
+            size="small"
+            @click="deleteRoleByid(scope.row)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -28,7 +53,7 @@
     />
     <!-- 角色名称修改 -->
     <el-dialog width="550px" :title="title" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
+      <el-form v-if="dialogFormVisible" :model="form">
         <el-form-item label="角色名称" :label-width="formLabelWidth">
           <el-input v-model="form.roleName" autocomplete="off" />
         </el-form-item>
@@ -58,13 +83,12 @@
       <el-tree
         ref="tree2"
         show-checkbox
+        accordion
         :data="data3"
-        :props="defaultProps"
         node-key="menueId"
-        :filter-node-method="filterNode"
         :default-expanded-keys="[0]"
         :default-checked-keys="roleIds"
-        class="filter-tree"
+        :props="defaultProps"
       />
       <div slot="footer" class="dialog-footer">
         <el-button @click="editRoleDialogFormVisible = false">取 消</el-button>
@@ -108,16 +132,8 @@ export default {
       dialogFormVisible: false,
       filterText: '',
       tableData: [],
-      data2: [{
-        menueId: 0,
-        menueName: '角色权限',
-        children: []
-      }],
-      data3: [{
-        menueId: 0,
-        menueName: '角色权限',
-        children: []
-      }],
+      data2: [],
+      data3: [],
       defaultProps: {
         children: 'children',
         label: 'menueName'
@@ -133,9 +149,11 @@ export default {
       return hasPermission(a)
     },
     async saveRole() {
+      var key = [...new Set([...this.$refs.tree2.getCheckedKeys(), ...this.$refs.tree2.getHalfCheckedKeys()])]
       const data = {
         roleId: this.editRoleId,
-        menueId: this.$refs.tree2.getCheckedKeys().join(',')
+        menueIds: this.$refs.tree2.getCheckedKeys().join(','),
+        menueId: key.join(',')
       }
       const res = await updataRolesByid(data)
       if (res.message === '成功') {
@@ -146,17 +164,18 @@ export default {
         this.editRoleDialogFormVisible = false
         this.getRoleByRoleName()
       }
-      console.log(this.$refs.tree2.getCheckedKeys().join(','))
     },
-    editRoleByid(roleId) {
-      this.data2[0].children = []
+    async editRoleByid(roleId) {
       this.roleTitle = '角色权限编辑'
       this.editRoleDialogFormVisible = true
       this.editRoleId = roleId.roleId
-      this.getRoleByRoleid(roleId.roleId)
+      const result = await getPower()
+      if (result.message === '成功') {
+        this.data3 = result.content.menue
+        this.getRoleByRoleid(roleId.roleId)
+      }
     },
     getRoleByid(roleId) {
-      this.data2[0].children = []
       this.roleTitle = '角色权限查询'
       this.roleDialogFormVisible = true
       this.getRoleByRoleid(roleId.roleId)
@@ -168,17 +187,14 @@ export default {
       const res = await getRolesByid(data)
       if (res.message === '成功') {
         if (this.roleTitle === '角色权限编辑') {
-          const result = await getPower()
+          var result = await getPower()
           if (result.message === '成功') {
-            this.data3[0].children = result.content.menue
+            var roleIds = []
+            roleIds = res.roleId.split(',')
+            this.roleIds = roleIds.map(Number)
           }
-          var roleIds = []
-          roleIds = res.roleId.split(',')
-          this.$nextTick(() => {
-            this.roleIds = [...roleIds.map(Number)]
-          })
         } else {
-          this.data2[0].children = res.content
+          this.data2 = res.content
         }
       }
     },
@@ -199,6 +215,7 @@ export default {
         })
         this.dialogFormVisible = false
         this.getRoleByRoleName()
+        this.getRole()
       }
     },
     editRole(a) {
@@ -270,6 +287,7 @@ export default {
           message: '删除成功'
         })
         this.getRoleByRoleName()
+        this.getRole()
       }
     },
     filterNode(value, data) {

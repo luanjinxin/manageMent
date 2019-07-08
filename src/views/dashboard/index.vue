@@ -1,7 +1,5 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-  </div>
+  <div>11111111111</div>
 </template>
 
 <script>

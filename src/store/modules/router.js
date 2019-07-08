@@ -13,9 +13,7 @@ export function recursionRouter(menus) {
       router.name = menu.menueName
       router.meta.title = menu.menueName
       router.meta.icon = menu.ico_view
-      menu.menuePath === 'dashboard'
-        ? ''
-        : (router.redirect = `/${menu.menuePath}`)
+      router.redirect = `/${menu.menuePath}`
     } else {
       router.path = menu.menueUrl
       router.component = () => import(`@/views/${menu.menuePath}`)
@@ -27,6 +25,7 @@ export function recursionRouter(menus) {
     if (menu.children && menu.children.length > 0) {
       router.children = recursionRouter(menu.children)
     }
+    console.log(JSON.stringify(router))
     dynamicRouters.push(router)
   })
   return dynamicRouters

@@ -19,8 +19,13 @@
       <el-form>
         <el-form-item label="名称:" :label-width="'50px'">
           <el-input v-model="search" style="width:150px" size="small" autocomplete="off" />&nbsp;&nbsp;
-          <el-button size="small" type="primary" @click="getPowerByPid(menuePid)">查询</el-button>
-          <el-button v-if="hasButton('role:add')" size="small" type="primary" @click="addPower">新增</el-button>
+          <el-button
+            v-if="hasButton('power:select')"
+            size="small"
+            type="primary"
+            @click="getPowerByPid(menuePid)"
+          >查询</el-button>
+          <el-button v-if="hasButton('power:add')" size="small" type="primary" @click="addPower">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData" border style="width: 100%">
@@ -33,8 +38,18 @@
         <el-table-column align="center" prop="menueUrl" label="path" />
         <el-table-column align="center" fixed="right" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="editPower(scope.row)">编辑</el-button>
-            <el-button type="text" size="small" @click="deleteMenue(scope.row)">删除</el-button>
+            <el-button
+              v-if="hasButton('power:edit')"
+              type="text"
+              size="small"
+              @click="editPower(scope.row)"
+            >编辑</el-button>
+            <el-button
+              v-if="hasButton('power:del')"
+              type="text"
+              size="small"
+              @click="deleteMenue(scope.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -148,6 +163,7 @@ export default {
         })
         this.dialogFormVisible = false
         this.getPowerByPid(this.menuePid)
+        this.getPower()
       }
     },
     editPower(a) {
@@ -210,23 +226,29 @@ export default {
       }
     },
     async  deleteMenue(menueId) {
-      await this.$confirm('删除后不可恢复是否删除？', '确认信息', {
-        distinguishCancelAndClose: true,
-        confirmButtonText: '删除',
-        cancelButtonText: '取消'
-      })
-
-      const data = {
+      // await this.$confirm('删除后不可恢复是否删除？', '确认信息', {
+      //   distinguishCancelAndClose: true,
+      //   confirmButtonText: '删除',
+      //   cancelButtonText: '取消'
+      // })
+      var data = {
         menueId: menueId.menueId
       }
-      const res = deletePowerByid(data)
-      if (res.message === '成功') {
-        this.$message({
-          type: 'info',
-          message: '删除成功'
-        })
-        this.getPowerByPid(this.menuePid)
-      }
+      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const res = await deletePowerByid(data)
+        if (res.message === '成功') {
+          this.$message({
+            type: 'info',
+            message: '删除成功'
+          })
+          this.getPowerByPid(this.menuePid)
+          this.getPower()
+        }
+      })
     },
     filterNode(value, data) {
       if (!value) return true

@@ -1,5 +1,5 @@
 module.exports = {
-  title: '权限管理系统',
+  title: 'blog管理系统',
 
   /**
    * @type {boolean} true | false
