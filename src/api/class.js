@@ -21,6 +21,20 @@ export function updataClassShowByid(data) {
     data
   })
 }
+export function updataIsTagByid(data) {
+  return request({
+    url: '/updataIsTagByid',
+    method: 'post',
+    data
+  })
+}
+export function updataClassIsNavByid(data) {
+  return request({
+    url: '/updataClassIsNavByid',
+    method: 'post',
+    data
+  })
+}
 export function deleteClassByid(data) {
   return request({
     url: '/deleteClassByid',

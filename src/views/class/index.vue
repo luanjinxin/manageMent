@@ -9,9 +9,11 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column align="center" prop="classId" label="id" width="280" />
-      <el-table-column align="center" prop="className" label="分类名称" width="280" />
-      <el-table-column align="center" prop="isShow" label="是否显示" width="280" />
+      <el-table-column align="center" prop="classId" label="id" width="180" />
+      <el-table-column align="center" prop="className" label="分类名称" width="180" />
+      <el-table-column align="center" prop="isShow" label="是否显示" width="180" />
+      <el-table-column align="center" prop="isTag" label="是否是标签" width="180" />
+      <el-table-column align="center" prop="isNav" label="是否是nav" width="180" />
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button
@@ -27,6 +29,18 @@
             @click="updataClassShowByid(scope.row)"
           >{{ scope.row.isShow==='不显示' ? '显示':'隐藏' }}</el-button>
           <el-button
+            v-if="hasButton('class:hidden')"
+            type="text"
+            size="small"
+            @click="updataClassIsTagByid(scope.row)"
+          >{{ scope.row.isTag==='否' ? '设置标签':'取消标签' }}</el-button>
+          <el-button
+            v-if="hasButton('class:hidden')"
+            type="text"
+            size="small"
+            @click="updataClassIsNavByid(scope.row)"
+          >{{ scope.row.isNav==='否' ? '设置nav':'取消nav' }}</el-button>
+          <el-button
             v-if="hasButton('class:del')"
             type="text"
             size="small"
@@ -38,7 +52,7 @@
   </div>
 </template>
 <script>
-import { getClass, addClass, updataClassByid, deleteClassByid, updataClassShowByid } from '@/api/class'
+import { getClass, addClass, updataClassByid, deleteClassByid, updataClassShowByid, updataIsTagByid, updataClassIsNavByid } from '@/api/class'
 import { hasPermission } from '../../utils'
 export default {
   data() {
@@ -58,8 +72,10 @@ export default {
     async getClass() {
       const res = await getClass()
       if (res.message === '成功') {
-        res.content.map(itme => {
-          itme.isShow === 0 ? itme.isShow = '不显示' : itme.isShow = '显示'
+        res.content.map(item => {
+          item.isShow === 0 ? item.isShow = '不显示' : item.isShow = '显示'
+          item.isNav === 0 ? item.isNav = '否' : item.isNav = '是'
+          item.isTag === 0 ? item.isTag = '否' : item.isTag = '是'
         })
         this.tableData = res.content
       }
@@ -95,6 +111,36 @@ export default {
         this.$message({
           type: 'info',
           message: '删除成功'
+        })
+        this.getClass()
+      }
+    },
+    async updataClassIsTagByid(row) {
+      const data = {
+        classId: row.classId,
+        isTag: row.isTag === '是' ? 0 : 1
+      }
+      console.log('1111' + row.isShow)
+      const res = await updataIsTagByid(data)
+      if (res.message === '成功') {
+        this.$message({
+          type: 'info',
+          message: '设置成功'
+        })
+        this.getClass()
+      }
+    },
+    async updataClassIsNavByid(row) {
+      const data = {
+        classId: row.classId,
+        isNav: row.isNav === '是' ? 0 : 1
+      }
+      console.log('1111' + row.isShow)
+      const res = await updataClassIsNavByid(data)
+      if (res.message === '成功') {
+        this.$message({
+          type: 'info',
+          message: '设置成功'
         })
         this.getClass()
       }
