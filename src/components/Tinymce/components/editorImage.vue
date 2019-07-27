@@ -16,7 +16,7 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="http://127.0.0.1:1888/file_upload"
+        action="http://xqd.manbanpai.club:1888/file_upload"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">点击上传</el-button>

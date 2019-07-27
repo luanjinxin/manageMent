@@ -35,7 +35,7 @@
         <el-form-item>
           <el-upload
             class="avatar-uploader"
-            action="http://127.0.0.1:1888/file_upload"
+            action="http://xqd.manbanpai.club:1888/file_upload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
           >
