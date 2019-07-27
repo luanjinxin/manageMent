@@ -33,7 +33,7 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ loginName: username.trim(), loginPwd: password })
+      login({ userEmail: username.trim(), loginPwd: password })
         .then(response => {
           const data = response
 

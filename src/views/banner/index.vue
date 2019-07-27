@@ -35,7 +35,7 @@
         <el-form-item>
           <el-upload
             class="avatar-uploader"
-            action="http://xqd.manbanpai.club:1888/file_upload"
+            action="http://127.0.0.1:1888/file_upload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
           >
@@ -79,7 +79,7 @@ export default {
       }
     },
     handleAvatarSuccess(e) {
-      this.imageUrl = `http://xqd.manbanpai.club:1888/${e.content}`
+      this.imageUrl = `${e.content}`
       console.log(e)
     },
     hasButton(a) {

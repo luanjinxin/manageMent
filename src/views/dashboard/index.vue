@@ -1,5 +1,5 @@
 <template>
-  <div>11111111111</div>
+  <div>首页什么都没有</div>
 </template>
 
 <script>
