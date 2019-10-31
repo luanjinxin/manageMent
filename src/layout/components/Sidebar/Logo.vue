@@ -2,7 +2,7 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" src="@/assets/image/logo.png" class="sidebar-logo">
+        <img v-if="logo" src="@/assets/image/logo.png" class="sidebar-logo" />
         <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
@@ -18,10 +18,10 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
-      title: 'blog管理系统',
-      logo: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1882576949,1507167761&fm=26&gp=0.jpg'
+      title: 'VitaRealm管理系统',
+      logo: 'https://mp.weixin.qq.com/wxopen/basicprofile?action=get_headimg&token=1876236392&t=20190823153619'
     }
   }
 }
@@ -45,7 +45,6 @@ export default {
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
-
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
@@ -55,6 +54,7 @@ export default {
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
+      border-radius: 50%;
     }
 
     & .sidebar-title {

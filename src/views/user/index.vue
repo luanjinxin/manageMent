@@ -14,14 +14,6 @@
           />
         </el-select>&nbsp;&nbsp;
       </el-form-item>
-      <el-form-item label-width="130px" label="是否加入黑名单">
-        <el-radio v-model="form.isBlackList" label="1">是</el-radio>
-        <el-radio v-model="form.isBlackList" label="0">否</el-radio>
-      </el-form-item>
-      <el-form-item label-width="130px" label="是否隐藏回复">
-        <el-radio v-model="form.hideReply" label="1">是</el-radio>
-        <el-radio v-model="form.hideReply" label="0">否</el-radio>
-      </el-form-item>
       <el-form-item>
         <el-button
           v-if="hasButton('user:select')"
@@ -34,13 +26,11 @@
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column align="center" prop="userId" label="用户id" width="100" />
-      <el-table-column align="center" prop="userName" label="用户名" width="130" />
-      <el-table-column align="center" prop="loginName" label="登录名" width="130" />
-      <el-table-column align="center" prop="isBlackList" label="是否黑名单" width="100" />
-      <el-table-column align="center" prop="roleName" label="角色名" width="120" />
+      <el-table-column align="center" prop="userName" label="用户名" width="180" />
+      <el-table-column align="center" prop="loginName" label="登录名" width="180" />
+      <el-table-column align="center" prop="roleName" label="角色名" width="180" />
       <el-table-column align="center" prop="userEmail" label="邮箱" width="180" />
       <el-table-column align="center" prop="creatTime" label="创建时间" width="120" />
-      <el-table-column align="center" prop="hideReply" label="是否隐藏回复" width="120" />
       <el-table-column align="center" fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button
@@ -61,18 +51,6 @@
             size="small"
             @click="deleteUseryid(scope.row)"
           >删除</el-button>
-          <el-button
-            v-if="hasButton('user:blaskList')"
-            type="text"
-            size="small"
-            @click="updataUserIsBlackListByid(scope.row)"
-          >{{ scope.row.isBlackList==='是' ? '取消黑名单':'设置黑名单' }}</el-button>
-          <el-button
-            v-if="hasButton('user:hidden')"
-            type="text"
-            size="small"
-            @click="updataUserHideReplyByid(scope.row)"
-          >{{ scope.row.hideReply==='是' ? '显示回复':'隐藏回复' }}</el-button>
         </template>
       </el-table-column>
     </el-table>
