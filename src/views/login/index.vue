@@ -81,11 +81,11 @@ export default {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           await this.$store.dispatch('user/login', this.loginForm)
-          // 第一次登陆初始化一下路由侧边栏
-          await store.dispatch('user/getInfo')
-          await store.dispatch('router/generateRouters', store.getters.router)
-          // 动态添加路由
-          router.addRoutes(store.getters.dynamicRouters)
+          // // 第一次登陆初始化一下路由侧边栏
+          // await store.dispatch('user/getInfo')
+          // await store.dispatch('router/generateRouters', store.getters.router)
+          // // 动态添加路由
+          // router.addRoutes(store.getters.dynamicRouters)
           this.$router.push({ path: this.redirect || '/' })
         }
       })
