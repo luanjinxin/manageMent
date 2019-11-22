@@ -1,9 +1,9 @@
-import router from './router'
-import store from './store'
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
-import { getToken } from '@/utils/auth' // get token from cookie
-import getPageTitle from '@/utils/get-page-title'
+import router from './router';
+import store from './store';
+import NProgress from 'nprogress'; // progress bar
+import 'nprogress/nprogress.css'; // progress bar style
+import { getToken } from '@/utils/auth'; // get token from cookie
+import getPageTitle from '@/utils/get-page-title';
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -25,17 +25,18 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasRouter = store.getters.router
-      if (hasRouter) {
-        next()
-      } else {
-        // get user info
-        await store.dispatch('user/getInfo')
-        await store.dispatch('router/generateRouters', store.getters.router)
-        router.addRoutes(store.getters.dynamicRouters)
-        // hack方法 确保addRoutes已完成
-        next({ ...to, replace: true })
-      }
+      // const hasRouter = store.getters.router
+      // if (hasRouter) {
+      //   next()
+      // } else {
+      //   // get user info
+      //   await store.dispatch('user/getInfo')
+      //   await store.dispatch('router/generateRouters', store.getters.router)
+      //   router.addRoutes(store.getters.dynamicRouters)
+      //   // hack方法 确保addRoutes已完成
+      //   next({ ...to, replace: true })
+      // }
+      next({ ...to, replace: true })
     }
   } else {
     /* has no token*/
