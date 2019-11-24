@@ -13,7 +13,7 @@
         mode="vertical"
       >
         <sidebar-item
-          v-for="route in fullRouters"
+          v-for="route in routes"
           :key="route.path"
           :item="route"
           :base-path="route.path"
@@ -37,12 +37,16 @@ export default {
     ]),
     activeMenu() {
       const route = this.$route
+      console.log('1111' + route)
       const { meta, path } = route
       // if set path, the sidebar will highlight the path you set
       if (meta.activeMenu) {
         return meta.activeMenu
       }
       return path
+    },
+     routes() {
+      return this.$router.options.routes
     },
     showLogo() {
       return this.$store.state.settings.sidebarLogo

@@ -36,7 +36,25 @@ router.beforeEach(async(to, from, next) => {
       //   // hack方法 确保addRoutes已完成
       //   next({ ...to, replace: true })
       // }
-      next({ ...to, replace: true })
+    //  next({ ...to, replace: true })
+    next()
+    // const hasGetUserInfo = store.getters.name
+    // if (hasGetUserInfo) {
+    //   next()
+    // } else {
+    //   try {
+    //     // get user info
+    //     await store.dispatch('user/getInfo')
+
+    //     next()
+    //   } catch (error) {
+    //     // remove token and go to login page to re-login
+    //     await store.dispatch('user/resetToken')
+    //     Message.error(error || 'Has Error')
+    //     next(`/login?redirect=${to.path}`)
+    //     NProgress.done()
+    //   }
+    // }
     }
   } else {
     /* has no token*/
