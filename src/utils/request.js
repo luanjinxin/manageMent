@@ -1,8 +1,8 @@
-import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
-import { getToken } from '@/utils/auth'
-import router from '../router'
+import axios from 'axios';
+import { MessageBox, Message } from 'element-ui';
+import store from '@/store';
+import { getToken } from '@/utils/auth';
+import router from '../router';
 
 // create an axios instance
 const service = axios.create({
@@ -17,7 +17,7 @@ service.interceptors.request.use(
     // do something before request is sent
 
     if (store.getters.token) {
-      config.headers['Authorization'] = `Bearer ${getToken()}`
+      config.headers['Authorization'] = `${getToken()}`
     }
     return config
   },
@@ -73,7 +73,7 @@ service.interceptors.response.use(
     Message({
       message: error.message,
       type: 'error',
-      duration: 5 * 1000
+      duration: 10 * 1000
     })
     return Promise.reject(error)
   }

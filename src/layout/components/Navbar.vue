@@ -37,11 +37,18 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      name: ''
+    }
+  },
   computed: {
     ...mapGetters([
-      'sidebar',
-      'name'
+      'sidebar'
     ])
+  },
+  created() {
+    this.name = localStorage.getItem('name')
   },
   methods: {
     toggleSideBar() {

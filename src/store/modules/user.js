@@ -38,6 +38,7 @@ const actions = {
           const data = response
           commit('SET_TOKEN', data.Data.Token)
           commit('SET_NAME', data.Data.name)
+          localStorage.setItem('name', data.Data.name)
           setToken(data.Data.Token)
           resolve()
         })
@@ -68,6 +69,7 @@ const actions = {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
       removeToken()
+      localStorage.removeItem('name')
       resetRouter()
       resolve()
     })

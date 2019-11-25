@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Layout from '@/layout'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Layout from '@/layout';
 Vue.use(Router)
 export const constantRoutes = [
   {
@@ -12,29 +12,46 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: '主页',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '主页', icon: 'el-icon-tickets' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: '主页',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '主页', icon: 'el-icon-tickets' }
+      }
+    ]
   },
   {
     path: '/goods',
     component: Layout,
     redirect: '/goods',
-    children: [{
-      path: 'goods',
-      name: '商品管理',
-      component: () => import('@/views/goods/index'),
-      meta: { title: '商品管理', icon: 'el-icon-goods' }
-    }]
+    children: [
+      {
+        path: 'goods',
+        name: '商品管理',
+        component: () => import('@/views/goods/index'),
+        meta: { title: '商品管理', icon: 'el-icon-goods' }
+      }
+    ]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    redirect: '/order',
+    children: [
+      {
+        path: 'order',
+        name: '商品管理',
+        component: () => import('@/views/order/index'),
+        meta: { title: '订单管理', icon: 'el-icon-tickets' }
+      }
+    ]
   },
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
-  },
+  }
   // {
   //   path: '/nested',
   //   component: Layout,
