@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :inline="true" :model="form" class="demo-form-inline" label-width="80px">
+    <el-form
+      ref="form"
+      :inline="true"
+      :model="form"
+      class="demo-form-inline"
+      label-width="80px"
+    >
       <el-form-item label="使用时间">
         <el-date-picker
           v-model="form.useTime"
@@ -14,37 +20,76 @@
         <el-radio v-model="form.isUse" label="0">否</el-radio>
       </el-form-item>
       <el-form-item>
-        <el-button size="medium" type="primary" @click="getRedboxId()">查询</el-button>
+        <el-button
+size="medium"
+type="primary" @click="getRedboxId()">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button size="medium" type="primary" @click="rest()">重置</el-button>
       </el-form-item>
+      <el-button
+        size="medium"
+        type="primary"
+        @click="centerDialogVisible = true"
+      >添加</el-button>
     </el-form>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column align="center" prop="id" label="id" width="100" />
       <el-table-column align="center" prop="redBoxId" label="序列号key" />
-      <el-table-column align="center" prop="isUse" label="是否使用" width="230" />
-      <el-table-column align="center" prop="useTime" label="使用时间" width="200" />
-      <el-table-column align="center" prop="creatTime" label="创建时间" width="320" />
+      <el-table-column
+        align="center"
+        prop="isUse"
+        label="是否使用"
+        width="230"
+      />
+      <el-table-column
+        align="center"
+        prop="useTime"
+        label="使用时间"
+        width="200"
+      />
+      <el-table-column
+        align="center"
+        prop="creatTime"
+        label="创建时间"
+        width="320"
+      />
     </el-table>
     <pagination
-      v-show="pageCount>0"
+      v-show="pageCount > 0"
       :total="pageCount"
       :page.sync="pageNumber"
       :limit.sync="pageSize"
       @pagination="getRedboxId()"
     />
+    <el-dialog
+      title="输入抽奖key"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center
+    >
+      <el-form>
+        <el-form-item>
+          <el-input v-model="redboxId" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addRedboxIds">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getRedboxId } from '@/api/luck'
-import { hasPermission } from '../../utils'
-import Pagination from '../../components/Pagination'
+import { getRedboxId, addRedBoxId } from '@/api/luck';
+import { hasPermission } from '../../utils';
+import Pagination from '../../components/Pagination';
 export default {
   name: 'ComplexTable',
   components: { Pagination },
   data() {
     return {
+      centerDialogVisible: false,
       listQuery: {
         page: 1,
         limit: 20,
@@ -61,6 +106,7 @@ export default {
         isUse: '',
         useTime: ''
       },
+      redboxId: '',
       tableData: [],
       options: [],
       pageSize: 10,
@@ -76,6 +122,20 @@ export default {
       this.form.isUse = ''
       this.form.useTime = ''
     },
+    async addRedboxIds() {
+      const data = {
+        redboxId: this.redboxId
+      }
+      const res = await addRedBoxId(data)
+      if (res.message === '成功') {
+        this.$message({
+          type: 'info',
+          message: '操作成功'
+        })
+        this.centerDialogVisible = false
+        this.getRedboxId()
+      }
+    },
     async getRedboxId() {
       const data = {
         pageSize: this.pageSize,
@@ -90,8 +150,8 @@ export default {
       const res = await getRedboxId(data)
       if (res.message === '成功') {
         res.content.map(item => {
-          item.isUse === 0 ? item.isUse = '未使用' : item.isUse = '已使用'
-          item.useTime === '0' ? item.useTime = '———' : ''
+          item.isUse === 0 ? (item.isUse = '未使用') : (item.isUse = '已使用')
+          item.useTime === '0' ? (item.useTime = '———') : '';
         })
         this.tableData = res.content
         this.pageNumber = res.page.pageNumber
@@ -105,7 +165,7 @@ export default {
   }
 }
 </script>
-<style scoped >
+<style scoped>
 .app-container {
   /* display: flex;
   flex-direction: row; */

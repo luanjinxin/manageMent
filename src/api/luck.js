@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request';
 
 export function getLuckId(data) {
   return request({
@@ -118,6 +118,15 @@ export function getRedboxId(data) {
     data
   })
 }
+// 添加抽奖红包key
+export function addRedBoxId(data) {
+  return request({
+    url: '/insertRedBoxIds',
+    method: 'post',
+    data
+  })
+}
+
 // 查询红包获奖人员
 export function getRedboxList(data) {
   return request({
