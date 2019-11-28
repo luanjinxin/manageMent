@@ -24,7 +24,7 @@
             <el-option
               v-for="item in option"
               :key="item.ProductID"
-              :label="item.TM_Sku"
+              :label="item.InternalName"
               :value="item.ProductID"
             />
           </el-select>
@@ -44,14 +44,12 @@
           <el-button type="primary" @click="getOrderList">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="dialogFormVisible = true"
-            >导出</el-button
-          >
+          <el-button type="primary" @click="exportData">导出</el-button>
         </el-form-item>
         <el-form-item>
           <el-upload
             class="upload-demo"
-            action="http://apiexlce.vitarealm.cn/Upload/UploadResource"
+            action="http://excel.vitarealm.cn/Upload/UploadResource"
             :data="data"
             :headers="headers"
             multiple
@@ -67,29 +65,38 @@
     <div class="h20" />
     <el-card class="box-card">
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column align="center" prop="OrderType" label="平台" />
+        <el-table-column
+          align="center"
+          width="80px"
+          prop="OtherStr"
+          label="平台"
+        />
         <el-table-column
           align="center"
           prop="OrderNo"
-          width="100px"
+          width="180px"
           label="订单号"
         />
+        <el-table-column align="center" prop="BuyUserName" label="会员名" />
+        <el-table-column align="center" prop="ProductName" label="商品名称" />
         <el-table-column
           align="center"
-          prop="OrderGood.ProductName"
-          label="商品名称"
-        />
-        <el-table-column
-          align="center"
-          prop="OrderGood.Count"
+          width="80px"
+          prop="Count"
           label="购买数量"
         />
         <el-table-column
           align="center"
-          prop="OrderGood.TotalPrice "
+          width="80px"
+          prop="RealPrice"
           label="实际付款"
         />
-        <el-table-column align="center" prop="ReceiveName" label="收件人姓名" />
+        <el-table-column
+          align="center"
+          width="90px"
+          prop="ReceiveName"
+          label="收件人姓名"
+        />
         <el-table-column
           align="center"
           prop="ReceivePhone"
@@ -97,11 +104,12 @@
         />
         <el-table-column
           align="center"
+          show-overflow-tooltip
           prop="ReceiveAddress"
           label="收件人地址"
         />
-        <el-table-column align="center" prop="CreateTime " label="创建时间" />
-        <el-table-column align="center" prop="PayTime " label="支付时间" />
+        <el-table-column align="center" prop="CreateTime" label="创建时间" />
+        <!-- <el-table-column align="center" prop="PayTime" label="支付时间" /> -->
       </el-table>
       <pagination
         v-show="pageCount > 0"
@@ -117,7 +125,13 @@
 import Pagination from "../../components/Pagination";
 import { getToken } from "@/utils/auth";
 import moment from "moment";
-import { getGoodsList, getOrderList, ImportData } from "@/api/goods";
+import axios from "axios";
+import {
+  getGoodsList,
+  getOrderList,
+  ImportData,
+  exportData
+} from "@/api/goods";
 export default {
   components: { Pagination },
   data() {
@@ -185,13 +199,51 @@ export default {
     this.getSelectList();
   },
   methods: {
+    async exportData() {
+      var data = this.search;
+      if (this.value2.length > 0) {
+        data.sDate = `${moment(this.value2[0]).format("YYYY-MM-DD") +
+          " 00:00:00"}`;
+        data.eDate = `${moment(this.value2[1]).format("YYYY-MM-DD") +
+          " 23:59:59"}`;
+      }
+      data.pageIndex = this.pageNumber;
+      data.pageSize = this.pageSize;
+      data.IsMultiple = -1;
+      axios({
+        // 用axios发送post请求
+        method: "post",
+        url: "http://excel.vitarealm.cn/order/Export", // 请求地址
+        data: data, // 参数
+        responseType: "blob", // 表明返回服务器返回的数据类型
+        headers: {
+          Authorization: getToken()
+        }
+      }).then(res => {
+        // 处理返回的文件流
+        var blob = new Blob([res.data], {
+          type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+        });
+        var contentDisposition = res.headers["content-disposition"];
+        var filename = "订单.xls";
+        var downloadElement = document.createElement("a");
+        var href = window.URL.createObjectURL(blob); //创建下载的链接
+        downloadElement.style.display = "none";
+        downloadElement.href = href;
+        downloadElement.download = filename; //下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); //点击下载
+        document.body.removeChild(downloadElement); //下载完成移除元素
+        window.URL.revokeObjectURL(href); //释放掉blob对象
+      });
+    },
     success(response, file, fileList) {
       this.$message({
         type: "info",
         message: "上传成功"
       });
       this.ImportData(response.link);
-      console.log(JSON.stringify(response));
     },
     async ImportData(url) {
       const data = {
@@ -224,7 +276,17 @@ export default {
         this.option = res.Data;
       }
     },
+    FormatToDate(val) {
+      if (val != null) {
+        var date = new Date(
+          parseInt(val.replace("/Date(", "").replace(")/", ""), 10)
+        );
+        return moment(date).format("YYYY-MM-DD HH:mm:ss");
+      }
+      return "";
+    },
     async getOrderList() {
+      var self = this;
       var data = this.search;
       if (this.value2.length > 0) {
         data.sDate = `${moment(this.value2[0]).format("YYYY-MM-DD") +
@@ -237,6 +299,11 @@ export default {
       data.IsMultiple = -1;
       const res = await getOrderList(data);
       if (res.Code === 200) {
+        res.Data.map(item => {
+          item.PayTime = self.FormatToDate(item.PayTime);
+          item.CreateTime = self.FormatToDate(item.CreateTime);
+          item.RealPrice = item.RealPrice.toFixed(2);
+        });
         this.tableData = res.Data;
         this.pageCount = res.Count;
       }
