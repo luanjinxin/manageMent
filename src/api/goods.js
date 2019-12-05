@@ -28,6 +28,20 @@ export function getGoodsList(data) {
     data
   });
 }
+export function getJoinList(data) {
+  return request({
+    url: "/product/GetJoinList",
+    method: "post",
+    data
+  });
+}
+export function JoinProduct(data) {
+  return request({
+    url: "/product/Join",
+    method: "post",
+    data
+  });
+}
 export function getOrderList(data) {
   return request({
     url: "/order/GetList",
