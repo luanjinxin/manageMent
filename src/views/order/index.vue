@@ -16,15 +16,11 @@
           <el-input v-model="search.keyword" />
         </el-form-item>
         <el-form-item label="商品名">
-          <el-select
-            v-model="search.productID"
-            filterable
-            placeholder="请选择商品"
-          >
+          <el-select v-model="search.productID" filterable placeholder="请选择商品">
             <el-option
               v-for="item in option"
               :key="item.ProductID"
-              :label="item.TM_Sku"
+              :label="item.InternalName"
               :value="item.ProductID"
             />
           </el-select>
@@ -44,9 +40,7 @@
           <el-button type="primary" @click="getOrderList">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="dialogFormVisible = true"
-            >导出</el-button
-          >
+          <el-button type="primary" @click="exportData">导出</el-button>
         </el-form-item>
         <el-form-item>
           <el-upload
@@ -59,7 +53,16 @@
             :on-success="success"
             :on-error="error"
           >
-            <el-button size="medium" type="primary">天猫</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 1">天猫</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 2">京东</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 3">苏宁</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 4">斑马</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 5">ICBC</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 6">拼多多</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 7">小红书</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 8">考拉</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 9">蜜芽</el-button>
+            <el-button size="medium" type="primary" @click="data.type = 10">寺库</el-button>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -67,41 +70,17 @@
     <div class="h20" />
     <el-card class="box-card">
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column align="center" prop="OrderType" label="平台" />
-        <el-table-column
-          align="center"
-          prop="OrderNo"
-          width="100px"
-          label="订单号"
-        />
-        <el-table-column
-          align="center"
-          prop="OrderGood.ProductName"
-          label="商品名称"
-        />
-        <el-table-column
-          align="center"
-          prop="OrderGood.Count"
-          label="购买数量"
-        />
-        <el-table-column
-          align="center"
-          prop="OrderGood.TotalPrice "
-          label="实际付款"
-        />
-        <el-table-column align="center" prop="ReceiveName" label="收件人姓名" />
-        <el-table-column
-          align="center"
-          prop="ReceivePhone"
-          label="收件人电话"
-        />
-        <el-table-column
-          align="center"
-          prop="ReceiveAddress"
-          label="收件人地址"
-        />
-        <el-table-column align="center" prop="CreateTime " label="创建时间" />
-        <el-table-column align="center" prop="PayTime " label="支付时间" />
+        <el-table-column align="center" width="80px" prop="OtherStr" label="平台" />
+        <el-table-column align="center" prop="OrderNo" width="180px" label="订单号" />
+        <el-table-column align="center" prop="BuyUserName" label="会员名" />
+        <el-table-column align="center" prop="ProductName" label="商品名称" />
+        <el-table-column align="center" width="80px" prop="Count" label="购买数量" />
+        <el-table-column align="center" width="80px" prop="RealPrice" label="实际付款" />
+        <el-table-column align="center" width="90px" prop="ReceiveName" label="收件人姓名" />
+        <el-table-column align="center" prop="ReceivePhone" label="收件人电话" />
+        <el-table-column align="center" show-overflow-tooltip prop="ReceiveAddress" label="收件人地址" />
+        <el-table-column align="center" prop="CreateTime" label="创建时间" />
+        <!-- <el-table-column align="center" prop="PayTime" label="支付时间" /> -->
       </el-table>
       <pagination
         v-show="pageCount > 0"
@@ -114,10 +93,16 @@
   </div>
 </template>
 <script>
-import Pagination from "../../components/Pagination";
-import { getToken } from "@/utils/auth";
-import moment from "moment";
-import { getGoodsList, getOrderList, ImportData } from "@/api/goods";
+import Pagination from '../../components/Pagination'
+import { getToken } from '@/utils/auth'
+import moment from 'moment'
+import axios from 'axios'
+import {
+  getGoodsList,
+  getOrderList,
+  ImportData,
+  exportData
+} from '@/api/goods'
 export default {
   components: { Pagination },
   data() {
@@ -125,30 +110,30 @@ export default {
       pickerOptions: {
         shortcuts: [
           {
-            text: "最近一周",
+            text: '最近一周',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近一个月",
+            text: '最近一个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近三个月",
+            text: '最近三个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
@@ -164,7 +149,7 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        sort: "+id"
+        sort: '+id'
       },
       pageSize: 10,
       pageNumber: 1,
@@ -172,77 +157,165 @@ export default {
       options: [
         {
           value: 1,
-          label: "天猫"
+          label: '天猫'
+        },
+        {
+          value: 2,
+          label: '京东'
+        },
+        {
+          value: 3,
+          label: '苏宁'
+        }, {
+          value: 4,
+          label: '斑马'
+        },
+        {
+          value: 5,
+          label: 'ICBC'
+        },
+        {
+          value: 6,
+          label: '拼多多'
+        },
+        {
+          value: 7,
+          label: '小红书'
+        },
+        {
+          value: 8,
+          label: '考拉'
+        },
+        {
+          value: 9,
+          label: '蜜芽'
+        },
+        {
+          value: 10,
+          label: '寺库'
         }
       ],
       option: [],
-      search: { keyword: "" },
+      search: { keyword: '' },
       tableData: []
-    };
+    }
   },
   created() {
-    this.getOrderList();
-    this.getSelectList();
+    this.getOrderList()
+    this.getSelectList()
   },
   methods: {
+    async exportData() {
+      var data = this.search
+      if (this.value2.length > 0) {
+        data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
+          ' 00:00:00'}`
+        data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
+          ' 23:59:59'}`
+      }
+      data.pageIndex = this.pageNumber
+      data.pageSize = this.pageSize
+      data.IsMultiple = -1
+      axios({
+        // 用axios发送post请求
+        method: 'post',
+        url: 'http://excel.vitarealm.cn/order/Export', // 请求地址
+        data: data, // 参数
+        responseType: 'blob', // 表明返回服务器返回的数据类型
+        headers: {
+          Authorization: getToken()
+        }
+      }).then(res => {
+        // 处理返回的文件流
+        var blob = new Blob([res.data], {
+          type:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+        })
+        var contentDisposition = res.headers['content-disposition']
+        var filename = '订单.xls'
+        var downloadElement = document.createElement('a')
+        var href = window.URL.createObjectURL(blob) // 创建下载的链接
+        downloadElement.style.display = 'none'
+        downloadElement.href = href
+        downloadElement.download = filename // 下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() // 点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放掉blob对象
+      })
+    },
     success(response, file, fileList) {
       this.$message({
-        type: "info",
-        message: "上传成功"
-      });
-      this.ImportData(response.link);
-      console.log(JSON.stringify(response));
+        type: 'info',
+        message: '上传成功'
+      })
+      this.ImportData(response.link)
     },
     async ImportData(url) {
       const data = {
         type: this.data.type,
         path: url
-      };
-      const res = await ImportData(data);
+      }
+      const res = await ImportData(data)
       if (res.Code === 200) {
         this.$message({
-          type: "info",
-          message: "数据导入成功"
-        });
-        this.getOrderList();
+          type: 'info',
+          message: '数据导入成功'
+        })
+        this.getOrderList()
       }
     },
     error() {
       this.$message({
-        type: "info",
-        message: "上传失败"
-      });
+        type: 'info',
+        message: '上传失败'
+      })
     },
     async getSelectList() {
       var data = {
         pageIndex: 1,
         pageSize: 200,
         IsMultiple: 0
-      };
-      const res = await getGoodsList(data);
+      }
+      const res = await getGoodsList(data)
       if (res.Code === 200) {
-        this.option = res.Data;
+        this.option = res.Data
       }
     },
-    async getOrderList() {
-      var data = this.search;
-      if (this.value2.length > 0) {
-        data.sDate = `${moment(this.value2[0]).format("YYYY-MM-DD") +
-          " 00:00:00"}`;
-        data.eDate = `${moment(this.value2[1]).format("YYYY-MM-DD") +
-          " 23:59:59"}`;
+    FormatToDate(val) {
+      if (val != null) {
+        var date = new Date(
+          parseInt(val.replace('/Date(', '').replace(')/', ''), 10)
+        )
+        return moment(date).format('YYYY-MM-DD HH:mm:ss')
       }
-      data.pageIndex = this.pageNumber;
-      data.pageSize = this.pageSize;
-      data.IsMultiple = -1;
-      const res = await getOrderList(data);
+      return ''
+    },
+    async getOrderList() {
+      var self = this
+      var data = this.search
+      if (this.value2.length > 0) {
+        data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
+          ' 00:00:00'}`
+        data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
+          ' 23:59:59'}`
+      }
+      data.pageIndex = this.pageNumber
+      data.pageSize = this.pageSize
+      data.IsMultiple = -1
+      const res = await getOrderList(data)
       if (res.Code === 200) {
-        this.tableData = res.Data;
-        this.pageCount = res.Count;
+        res.Data.map(item => {
+          item.PayTime = self.FormatToDate(item.PayTime)
+          item.CreateTime = self.FormatToDate(item.CreateTime)
+          item.RealPrice = item.RealPrice.toFixed(2)
+        })
+        this.tableData = res.Data
+        this.pageCount = res.Count
       }
     }
   }
-};
+}
 </script>
 <style scoped>
 .wrap {
