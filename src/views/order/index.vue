@@ -51,7 +51,7 @@
         <el-form-item>
           <el-upload
             class="upload-demo"
-            action="http://apiexlce.vitarealm.cn/Upload/UploadResource"
+            action="http://excel.vitarealm.cn/Upload/UploadResource"
             :data="data"
             :headers="headers"
             multiple
