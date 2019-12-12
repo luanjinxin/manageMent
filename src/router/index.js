@@ -37,13 +37,23 @@ export const constantRoutes = [
   {
     path: '/order',
     component: Layout,
-    redirect: '/order',
+    redirect: '/order/orderlist',
+    meta: {
+      title: '订单管理',
+      icon: 'el-icon-star-on'
+    },
     children: [
       {
-        path: 'order',
-        name: '商品管理',
+        path: 'orderlist',
+        name: '订单管理',
         component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'el-icon-tickets' }
+        meta: { title: '订单管理', icon: '' }
+      },
+      {
+        path: 'repeatOrder',
+        name: '重复订单管理',
+        component: () => import('@/views/repeatOrder/index'),
+        meta: { title: '重复订单管理', icon: '' }
       }
     ]
   },
@@ -66,29 +76,31 @@ export const constantRoutes = [
   //       path: 'menu1',
   //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
   //       name: 'Menu1',
-  //       meta: { title: 'Menu1', icon: ''},
+  //       meta: { title: 'Menu1', icon: '' },
   //       children: [
   //         {
   //           path: 'menu1-1',
   //           component: () => import('@/views/nested/menu1/menu1-1'),
   //           name: 'Menu1-1',
-  //           meta: { title: 'Menu1-1' , icon: ''}
+  //           meta: { title: 'Menu1-1', icon: '' }
   //         },
   //         {
   //           path: 'menu1-2',
   //           component: () => import('@/views/nested/menu1/menu1-2'),
   //           name: 'Menu1-2',
-  //           meta: { title: 'Menu1-2' , icon: ''},
+  //           meta: { title: 'Menu1-2', icon: '' },
   //           children: [
   //             {
   //               path: 'menu1-2-1',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
+  //               component: () =>
+  //                 import('@/views/nested/menu1/menu1-2/menu1-2-1'),
   //               name: 'Menu1-2-1',
-  //               meta: { title: 'Menu1-2-1' , icon: ''}
+  //               meta: { title: 'Menu1-2-1', icon: '' }
   //             },
   //             {
   //               path: 'menu1-2-2',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
+  //               component: () =>
+  //                 import('@/views/nested/menu1/menu1-2/menu1-2-2'),
   //               name: 'Menu1-2-2',
   //               meta: { title: 'Menu1-2-2', icon: '' }
   //             }
@@ -98,7 +110,7 @@ export const constantRoutes = [
   //           path: 'menu1-3',
   //           component: () => import('@/views/nested/menu1/menu1-3'),
   //           name: 'Menu1-3',
-  //           meta: { title: 'Menu1-3' , icon: ''}
+  //           meta: { title: 'Menu1-3', icon: '' }
   //         }
   //       ]
   //     },
@@ -108,7 +120,7 @@ export const constantRoutes = [
   //       meta: { title: 'menu2', icon: '' }
   //     }
   //   ]
-  // },
+  // }
 ]
 
 const createRouter = () =>
