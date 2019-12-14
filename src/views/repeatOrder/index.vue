@@ -2,7 +2,7 @@
   <div class="wrap">
     <el-card class="box-card">
       <el-form :inline="true" :model="search" class="demo-form-inline">
-        <el-form-item label="平台">
+        <!-- <el-form-item label="平台">
           <el-select v-model="search.type" filterable placeholder="请选择平台">
             <el-option
               v-for="item in options"
@@ -11,19 +11,9 @@
               :value="item.value"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item label="订单号">
+        </el-form-item>-->
+        <!-- <el-form-item label="订单号">
           <el-input v-model="search.keyword" />
-        </el-form-item>
-        <el-form-item label="商品名">
-          <el-select v-model="search.productID" filterable placeholder="请选择商品">
-            <el-option
-              v-for="item in option"
-              :key="item.ProductID"
-              :label="item.InternalName"
-              :value="item.ProductID"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item>
           <el-date-picker
@@ -38,33 +28,12 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getOrderList">查询</el-button>
+        </el-form-item>-->
+        <el-form-item>
+          <el-button type="primary" @click="sure(0)">确认导入重复订单</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="exportData">导出</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-upload
-            ref="upload"
-            class="upload-demo"
-            action="http://excel.vitarealm.cn/Upload/UploadResource"
-            :data="data"
-            :headers="headers"
-            multiple
-            :limit="1"
-            :on-success="success"
-            :on-error="error"
-          >
-            <el-button size="medium" type="primary" @click="data.type = 1">天猫</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 2">京东</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 3">苏宁</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 4">斑马</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 5">ICBC</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 6">拼多多</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 7">小红书</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 8">考拉</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 9">蜜芽</el-button>
-            <el-button size="medium" type="primary" @click="data.type = 10">寺库</el-button>
-          </el-upload>
+          <el-button type="primary" @click="sure(1)">取消导入重复订单</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -95,14 +64,11 @@
 </template>
 <script>
 import Pagination from '../../components/Pagination'
-import { getToken } from '@/utils/auth'
 import moment from 'moment'
-import axios from 'axios'
 import {
   getGoodsList,
-  getOrderList,
-  ImportData,
-  exportData
+  OrderRepeatList,
+  ConfirmOrderRepeat
 } from '@/api/goods'
 export default {
   components: { Pagination },
@@ -143,7 +109,6 @@ export default {
       data: {
         type: 1
       },
-      headers: { Authorization: getToken() },
       listQuery: {
         page: 1,
         limit: 20,
@@ -197,7 +162,7 @@ export default {
         }
       ],
       option: [],
-      search: { keyword: '' },
+      search: { keyword: '', type: 7 },
       tableData: []
     }
   },
@@ -206,77 +171,19 @@ export default {
     this.getSelectList()
   },
   methods: {
-    async exportData() {
-      var data = this.search
-      if (this.value2.length > 0) {
-        data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
-          ' 00:00:00'}`
-        data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
-          ' 23:59:59'}`
+    async sure(type) {
+      var data = {
+        type: -1,
+        methodsType: type,
+        isAll: -1
       }
-      data.pageIndex = this.pageNumber
-      data.pageSize = this.pageSize
-      data.IsMultiple = -1
-      axios({
-        // 用axios发送post请求
-        method: 'post',
-        url: 'http://excel.vitarealm.cn/order/Export', // 请求地址
-        data: data, // 参数
-        responseType: 'blob', // 表明返回服务器返回的数据类型
-        headers: {
-          Authorization: getToken()
-        }
-      }).then(res => {
-        // 处理返回的文件流
-        var blob = new Blob([res.data], {
-          type:
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-        })
-        var contentDisposition = res.headers['content-disposition']
-        var filename = '订单.xls'
-        var downloadElement = document.createElement('a')
-        var href = window.URL.createObjectURL(blob) // 创建下载的链接
-        downloadElement.style.display = 'none'
-        downloadElement.href = href
-        downloadElement.download = filename // 下载后文件名
-        document.body.appendChild(downloadElement)
-        downloadElement.click() // 点击下载
-        document.body.removeChild(downloadElement) // 下载完成移除元素
-        window.URL.revokeObjectURL(href) // 释放掉blob对象
-      })
-    },
-    success(response, file, fileList) {
-      this.$message({
-        type: 'info',
-        message: '上传成功'
-      })
-      this.ImportData(response.link)
-    },
-    async ImportData(url) {
-      const data = {
-        type: this.data.type,
-        path: url
-      }
-      const res = await ImportData(data)
+      const res = await ConfirmOrderRepeat(data)
       if (res.Code === 200) {
         this.$message({
           type: 'info',
-          message: res.Data
+          message: '操作成功'
         })
-        this.$refs.upload.clearFiles()
-        this.getOrderList()
-      } else {
-        // this.$message({
-        //   type: 'info',
-        //   message: '上传失败'
-        // })
       }
-    },
-    error() {
-      this.$message({
-        type: 'info',
-        message: '上传失败'
-      })
     },
     async getSelectList() {
       var data = {
@@ -310,7 +217,7 @@ export default {
       data.pageIndex = this.pageNumber
       data.pageSize = this.pageSize
       data.IsMultiple = -1
-      const res = await getOrderList(data)
+      const res = await OrderRepeatList(data)
       if (res.Code === 200) {
         res.Data.map(item => {
           item.PayTime = self.FormatToDate(item.PayTime)
