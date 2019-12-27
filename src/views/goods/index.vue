@@ -338,6 +338,7 @@ export default {
     async editGoods () {
       var data = this.form
       data.Img = ''
+      data.IsGiving = 0
       this.form.IsMultiple === true
         ? (this.form.IsMultiple = 1)
         : (this.form.IsMultiple = 0)
@@ -350,6 +351,7 @@ export default {
     async addGoods () {
       var data = this.form
       data.Img = ''
+      data.IsGiving = 0
       this.form.IsMultiple === true
         ? (this.form.IsMultiple = 1)
         : (this.form.IsMultiple = 0)

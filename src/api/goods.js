@@ -91,3 +91,10 @@ export function DelImportResult(data) {
     data
   });
 }
+export function DelOrder(data) {
+  return request({
+    url: "/order/DelOrder",
+    method: "post",
+    data
+  });
+}

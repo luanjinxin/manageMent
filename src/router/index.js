@@ -24,13 +24,23 @@ export const constantRoutes = [
   {
     path: '/goods',
     component: Layout,
-    redirect: '/goods',
+    redirect: '/goods/goodslist',
+    meta: {
+      title: '商品管理',
+      icon: 'el-icon-goods'
+    },
     children: [
       {
-        path: 'goods',
+        path: 'goodslist',
         name: '商品管理',
         component: () => import('@/views/goods/index'),
-        meta: { title: '商品管理', icon: 'el-icon-goods' }
+        meta: { title: '商品管理', icon: '' }
+      },
+      {
+        path: 'giving',
+        name: '赠品管理',
+        component: () => import('@/views/goods/giving'),
+        meta: { title: '赠品管理', icon: '' }
       }
     ]
   },
