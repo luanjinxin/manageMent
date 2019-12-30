@@ -28,6 +28,9 @@ type="primary" @click="getRedboxId()">查询</el-button>
         <el-button size="medium" type="primary" @click="rest()">重置</el-button>
       </el-form-item>
       <el-button
+size="medium"
+type="primary" @click="add">1111111111</el-button>
+      <el-button
         size="medium"
         type="primary"
         @click="centerDialogVisible = true"
@@ -119,8 +122,66 @@ export default {
   },
   methods: {
     rest() {
-      this.form.isUse = ''
-      this.form.useTime = ''
+      this.form.isUse = '';
+      this.form.useTime = '';
+    },
+    randomStr6(randomFlag, min, max) {
+      var str = '';
+      var range = min
+      var arr = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z'
+      ]
+
+      // 随机产生
+      if (randomFlag) {
+        range = Math.round(Math.random() * (max - min)) + min
+      }
+      for (var i = 0; i < range; i++) {
+        var pos = Math.round(Math.random() * (arr.length - 1))
+        str += arr[pos]
+      }
+      return str
+    },
+    async add() {
+      for (let index = 0; index < 20000; index++) {
+        var key = this.randomStr6(false, 6)
+        await addRedBoxId({ redboxId: key })
+      }
     },
     async addRedboxIds() {
       const data = {
