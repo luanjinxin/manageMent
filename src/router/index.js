@@ -68,6 +68,23 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/customer',
+    component: Layout,
+    redirect: '/customer/customerList',
+    meta: {
+      title: '顾客管理',
+      icon: 'el-icon-goods'
+    },
+    children: [
+      {
+        path: 'customerList',
+        name: '顾客管理',
+        component: () => import('@/views/customer/index'),
+        meta: { title: '顾客管理', icon: '' }
+      }
+    ]
+  },
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true

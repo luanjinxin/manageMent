@@ -78,21 +78,16 @@
         <span>销售数量:{{ SumCount }}--------销售总金额:{{ SumPrice }}</span>
       </div>
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column align="center" width="80px" prop="OrderList.OtherStr" label="平台" />
-        <el-table-column align="center" prop="OrderList.OrderNo" width="180px" label="订单号" />
-        <el-table-column align="center" prop="OrderList.BuyUserName" label="会员名" />
-        <el-table-column align="center" prop="OrderList.ProductName" label="商品名称" />
-        <el-table-column align="center" width="80px" prop="OrderList.Count" label="购买数量" />
-        <el-table-column align="center" width="80px" prop="OrderList.RealPrice" label="实际付款" />
-        <el-table-column align="center" width="90px" prop="OrderList.ReceiveName" label="收件人姓名" />
-        <el-table-column align="center" prop="OrderList.ReceivePhone" label="收件人电话" />
-        <el-table-column
-          align="center"
-          show-overflow-tooltip
-          prop="OrderList.ReceiveAddress"
-          label="收件人地址"
-        />
-        <el-table-column align="center" prop="OrderList.CreateTime" label="创建时间" />
+        <el-table-column align="center" width="80px" prop="OtherStr" label="平台" />
+        <el-table-column align="center" prop="OrderNo" width="180px" label="订单号" />
+        <el-table-column align="center" prop="BuyUserName" label="会员名" />
+        <el-table-column align="center" prop="ProductName" label="商品名称" />
+        <el-table-column align="center" width="80px" prop="Count" label="购买数量" />
+        <el-table-column align="center" width="80px" prop="RealPrice" label="实际付款" />
+        <el-table-column align="center" width="90px" prop="ReceiveName" label="收件人姓名" />
+        <el-table-column align="center" prop="ReceivePhone" label="收件人电话" />
+        <el-table-column align="center" show-overflow-tooltip prop="ReceiveAddress" label="收件人地址" />
+        <el-table-column align="center" prop="CreateTime" label="创建时间" />
         <el-table-column align="center" width="100px" label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -470,14 +465,12 @@ export default {
       const res = await getOrderList(data)
       if (res.Code === 200) {
         res.Data.map(item => {
-          item.OrderList.PayTime = self.FormatToDate(item.OrderList.PayTime)
-          item.OrderList.CreateTime = self.FormatToDate(item.OrderList.CreateTime)
-          item.OrderList.RealPrice = item.OrderList.RealPrice.toFixed(2)
+          item.RealPrice = item.RealPrice.toFixed(2)
         })
-        if (res.Data.length > 0) {
-          this.SumCount = res.Data[0].SumCount
-          this.SumPrice = res.Data[0].SumPrice.toFixed(2)
-        }
+        // if (res.Data.length > 0) {
+        //   this.SumCount = res.Data[0].SumCount
+        //   this.SumPrice = res.Data[0].SumPrice.toFixed(2)
+        // }
         if (this.search.productID) {
           this.showSum = true
         } else {

@@ -98,3 +98,31 @@ export function DelOrder(data) {
     data
   });
 }
+export function UpdateAppUserStatis(data) {
+  return request({
+    url: "/appuser/UpdateAppUserStatis",
+    method: "post",
+    data
+  });
+}
+export function GetCustomerList(data) {
+  return request({
+    url: "/appuser/GetList",
+    method: "post",
+    data
+  });
+}
+export function UpdateOrder(data) {
+  return request({
+    url: "/appuser/UpdateOrder",
+    method: "post",
+    data
+  });
+}
+export function AddAppUser(data) {
+  return request({
+    url: "/appuser/AddAppUser",
+    method: "post",
+    data
+  });
+}
