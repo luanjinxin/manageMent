@@ -60,6 +60,29 @@
         </el-form-item>
       </el-form>
     </el-card>
+    <el-card class="box-card">
+      <div v-if="showSum" slot="header" class="clearfix">
+        <span>下单次数:{{ result.sumCount }}--------订单总金额:{{ result.sumPrice }}-------购买人数{{ result.sumAppuser }}-------复购率{{ result.fugou }}%</span>
+      </div>
+      <el-table :data="tableData" stripe style="width: 100%">
+        <el-table-column align="center" width="80px" prop="Type" label="平台" />
+        <el-table-column align="center" prop="BuyUserName" width="180px" label="会员名" />
+        <el-table-column align="center" prop="Name" label="姓名" />
+        <el-table-column align="center" prop="Phone" label="电话" />
+        <el-table-column align="center" width="80px" prop="SumCount" label="购买次数" />
+        <el-table-column align="center" width="80px" prop="SumPrice" label="购买金额" />
+        <el-table-column align="center" show-overflow-tooltip prop="ReceiveAddress" label="收件人地址" />
+        <el-table-column align="center" prop="BuyLastTime" label="最后购买时间" />
+        <el-table-column align="center" prop="BuyHistory" label="购买商品" />
+      </el-table>
+      <pagination
+        v-show="pageCount > 0"
+        :total="pageCount"
+        :page.sync="pageNumber"
+        :limit.sync="pageSize"
+        @pagination="getList"
+      />
+    </el-card>
   </div>
 </template>
 <script>
@@ -70,9 +93,11 @@ import {
   GetCustomerList,
   UpdateAppUserStatis,
   UpdateOrder,
-  AddAppUser
+  AddAppUser,
+  GetPlatformStatis
 } from '@/api/goods'
 export default {
+  components: { Pagination },
   data () {
     return {
       pickerOptions: {
@@ -106,6 +131,8 @@ export default {
           }
         ]
       },
+      showSum: false,
+      result: {},
       search: { keyword: '', type: -1 },
       option: [],
       option1: [{ id: 0, name: '>=' }, { id: 1, name: '<' }],
@@ -156,9 +183,23 @@ export default {
           label: '寺库'
         }
       ],
+      type: {
+        1: '天猫',
+        2: '京东',
+        3: '苏宁',
+        4: '斑马',
+        5: 'ICBC',
+        6: '拼多多',
+        7: '小红书',
+        8: '考拉',
+        9: '蜜芽',
+        10: '寺库'
+      },
       value2: [],
-      pageNumber: 10,
-      pageSize: 1,
+      pageNumber: 1,
+      pageSize: 10,
+      pageCount: 0,
+      tableData: [],
       listQuery: {
         page: 1,
         limit: 20,
@@ -171,12 +212,22 @@ export default {
   },
   created () {
     this.getSelectList()
+    this.getList()
   },
   methods: {
     async creatDate () {
       // await UpdateOrder({})
       // await AddAppUser({})
       await UpdateAppUserStatis({})
+    },
+    FormatToDate (val) {
+      if (val != null) {
+        var date = new Date(
+          parseInt(val.replace('/Date(', '').replace(')/', ''), 10)
+        )
+        return moment(date).format('YYYY-MM-DD HH:mm:ss')
+      }
+      return ''
     },
     async setCustomerList () {
       const res = await UpdateAppUserStatis({})
@@ -194,8 +245,21 @@ export default {
       data.pageSize = this.pageSize
       const res = await GetCustomerList(data)
       if (res.Code === 200) {
+        res.Data.map(item => {
+          item.BuyLastTime = this.FormatToDate(item.BuyLastTime)
+          item.Type = this.type[item.Type]
+        })
         this.tableData = res.Data
         this.pageCount = res.Count
+      }
+      if (data.type !== -1) {
+        this.showSum = true
+        const result = await GetPlatformStatis(data)
+        if (result.Code === 200) {
+          result.Data.sumPrice = (result.Data.sumPrice).toFixed(2)
+          result.Data.fugou = (result.Data.sumCount / result.Data.sumAppuser).toFixed(2)
+          this.result = result.Data
+        }
       }
     },
     async getSelectList () {

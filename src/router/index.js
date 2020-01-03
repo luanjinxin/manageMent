@@ -1,6 +1,6 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import Layout from '@/layout';
+import Vue from 'vue'
+import Router from 'vue-router'
+import Layout from '@/layout'
 Vue.use(Router)
 export const constantRoutes = [
   {
@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'customerList',
         name: '顾客管理',
         component: () => import('@/views/customer/index'),
-        meta: { title: '顾客管理', icon: '' }
+        meta: { title: '顾客管理', icon: 'el-icon-goods' }
       }
     ]
   },

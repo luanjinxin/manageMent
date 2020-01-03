@@ -124,7 +124,8 @@ import {
   getOrderList,
   ImportData,
   GetImportResult,
-  DelOrder
+  DelOrder,
+  GetProductStatistics
 } from '@/api/goods'
 export default {
   components: { Pagination },
@@ -261,7 +262,7 @@ export default {
             data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
               ' 23:59:59'}`
           }
-          const res = await DelOrder()
+          const res = await DelOrder(data)
           if (res.Code === 200) {
             this.$message({
               type: 'info',
@@ -466,6 +467,7 @@ export default {
       if (res.Code === 200) {
         res.Data.map(item => {
           item.RealPrice = item.RealPrice.toFixed(2)
+          item.CreateTime = this.FormatToDate(item.CreateTime)
         })
         // if (res.Data.length > 0) {
         //   this.SumCount = res.Data[0].SumCount
@@ -478,6 +480,11 @@ export default {
         }
         this.tableData = res.Data
         this.pageCount = res.Count
+      }
+      const result = await GetProductStatistics(data)
+      if (res.Code === 200) {
+        this.SumCount = result.Data.SumCount
+        this.SumPrice = (result.Data.SumPrice).toFixed(2)
       }
     }
   }

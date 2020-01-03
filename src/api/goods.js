@@ -126,3 +126,17 @@ export function AddAppUser(data) {
     data
   });
 }
+export function GetPlatformStatis(data) {
+  return request({
+    url: "appuser/GetPlatformStatis",
+    method: "post",
+    data
+  });
+}
+export function GetProductStatistics(data) {
+  return request({
+    url: "order/GetProductStatistics",
+    method: "post",
+    data
+  });
+}
