@@ -49,6 +49,13 @@ export function getOrderList(data) {
     data
   });
 }
+export function OrderEdit(data) {
+  return request({
+    url: "/order/OrderEdit",
+    method: "post",
+    data
+  });
+}
 export function ImportData(data) {
   return request({
     url: "/Import/ImportData",

@@ -38,6 +38,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getOrderList">查询</el-button>
+          <el-button type="primary" @click="getProduct">查询所有商品</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="exportData">导出</el-button>
@@ -88,9 +89,11 @@
         <el-table-column align="center" prop="ReceivePhone" label="收件人电话" />
         <el-table-column align="center" show-overflow-tooltip prop="ReceiveAddress" label="收件人地址" />
         <el-table-column align="center" prop="CreateTime" label="创建时间" />
-        <el-table-column align="center" width="100px" label="操作">
+        <el-table-column align="center" width="200px" label="操作">
           <template slot-scope="scope">
+            <el-button size="mini" type="danger" @click="update(scope.row)">修改</el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <p></p>
           </template>
         </el-table-column>
         <!-- <el-table-column align="center" prop="PayTime" label="支付时间" /> -->
@@ -103,6 +106,44 @@
         @pagination="getOrderList"
       />
     </el-card>
+    <el-dialog title="订单信息" width="500px" :visible.sync="dialogFormVisibles">
+      <el-form ref="form" :model="form" label-width="100px">
+        <el-form-item label="平台">
+          <el-input v-model="form.OtherStr" />
+        </el-form-item>
+        <el-form-item label="订单号">
+          <el-input v-model="form.OrderNo" />
+        </el-form-item>
+        <el-form-item label="会员名">
+          <el-input v-model="form.BuyUserName" />
+        </el-form-item>
+        <el-form-item label="商品名称">
+          <el-input v-model="form.ProductName" />
+        </el-form-item>
+        <el-form-item label="购买数量">
+          <el-input v-model="form.Count" />
+        </el-form-item>
+        <el-form-item label="实际付款">
+          <el-input v-model="form.RealPrice" />
+        </el-form-item>
+        <el-form-item label="收件人姓名">
+          <el-input v-model="form.ReceiveName" />
+        </el-form-item>
+        <el-form-item label="收件人电话">
+          <el-input v-model="form.ReceivePhone" />
+        </el-form-item>
+        <el-form-item label="收件人地址">
+          <el-input v-model="form.ReceiveAddress" />
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-input v-model="form.CreateTime" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submit">立即修改</el-button>
+          <el-button @click="dialogFormVisibles = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
     <el-dialog title="导入结果" :visible.sync="dialogVisible" width="30%">
       <span>成功导入{{ OK }}条,失败导入{{ Fail }}条</span>
       <div v-if="ErrorList.length>0">
@@ -125,17 +166,19 @@ import {
   ImportData,
   GetImportResult,
   DelOrder,
-  GetProductStatistics
+  GetProductStatistics,
+  OrderEdit
 } from '@/api/goods'
+import { async } from 'q'
 export default {
   components: { Pagination },
-  data () {
+  data() {
     return {
       pickerOptions: {
         shortcuts: [
           {
             text: '最近一周',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
@@ -144,7 +187,7 @@ export default {
           },
           {
             text: '最近一个月',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
@@ -153,7 +196,7 @@ export default {
           },
           {
             text: '最近三个月',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
@@ -163,6 +206,7 @@ export default {
         ]
       },
       dialogVisible: false,
+      dialogFormVisibles: false,
       value2: [],
       data: {
         type: 1
@@ -232,21 +276,56 @@ export default {
       tableData: [],
       Fail: 0,
       OK: 0,
+      form: {},
       showHerf: false,
       ErrorList: [],
       dataType: 0,
       isPointPrice: 0,
       isType: 0,
       SumCount: 0,
-      SumPrice: 0
+      SumPrice: 0,
+      list: []
     }
   },
-  created () {
+  created() {
     this.getOrderList()
     this.getSelectList()
   },
   methods: {
-    async delAll () {
+    update(row) {
+      this.dialogFormVisibles = true
+      this.form = row
+      console.log(JSON.stringify(row))
+    },
+    async getProduct() {
+      var that = this
+      this.list = []
+      this.option.map(async item => {
+        var data = this.search
+        data.ProductID = item.ProductID
+        const res = await GetProductStatistics(data)
+        if (res.Code === 200) {
+          var d = {}
+          d.SumCount = res.Data.SumCount
+          d.SumPrice = res.Data.SumPrice.toFixed(2)
+          d.name = item.InternalName
+          that.list.push(d)
+        }
+      })
+      console.log(JSON.stringify(this.list))
+    },
+    async submit() {
+      var data = this.form
+      let res = await OrderEdit(data)
+      if (res.Code === 200) {
+        this.$message({
+          type: 'info',
+          message: '删除成功'
+        })
+        this.getOrderList()
+      }
+    },
+    async delAll() {
       this.$confirm('此操作会删除条件所有订单, 谨慎操作?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -278,7 +357,7 @@ export default {
           })
         })
     },
-    async handleDelete (row) {
+    async handleDelete(row) {
       this.$confirm('此操作会删除相关所有订单信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -305,7 +384,7 @@ export default {
           })
         })
     },
-    setType (a, b, c) {
+    setType(a, b, c) {
       console.log(a, b)
       this.dataType = a
       this.data.type = a
@@ -319,10 +398,10 @@ export default {
         this.isType = c
       }
     },
-    goRepeatList () {
+    goRepeatList() {
       this.$router.push('/order/repeatOrder')
     },
-    async exportData () {
+    async exportData() {
       var data = this.search
       if (this.value2.length > 0) {
         data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
@@ -361,14 +440,14 @@ export default {
         window.URL.revokeObjectURL(href) // 释放掉blob对象
       })
     },
-    success (response, file, fileList) {
+    success(response, file, fileList) {
       // this.$message({
       //   type: "info",
       //   message: "上传成功"
       // });
       this.ImportData(response.link)
     },
-    async GetImportResult () {
+    async GetImportResult() {
       const that = this
       const res = await GetImportResult({ type: this.dataType })
       if (res.Code === 200) {
@@ -398,7 +477,7 @@ export default {
         }
       }
     },
-    async ImportData (url) {
+    async ImportData(url) {
       const data = {
         type: this.dataType,
         isPointPrice: this.isPointPrice,
@@ -425,13 +504,13 @@ export default {
         this.GetImportResult()
       }, 0)
     },
-    error () {
+    error() {
       this.$message({
         type: 'info',
         message: '上传失败'
       })
     },
-    async getSelectList () {
+    async getSelectList() {
       var data = {
         pageIndex: 1,
         pageSize: 200,
@@ -442,7 +521,7 @@ export default {
         this.option = res.Data
       }
     },
-    FormatToDate (val) {
+    FormatToDate(val) {
       if (val != null) {
         var date = new Date(
           parseInt(val.replace('/Date(', '').replace(')/', ''), 10)
@@ -451,7 +530,7 @@ export default {
       }
       return ''
     },
-    async getOrderList () {
+    async getOrderList() {
       var self = this
       var data = this.search
       if (this.value2.length > 0) {
@@ -484,7 +563,7 @@ export default {
       const result = await GetProductStatistics(data)
       if (res.Code === 200) {
         this.SumCount = result.Data.SumCount
-        this.SumPrice = (result.Data.SumPrice).toFixed(2)
+        this.SumPrice = result.Data.SumPrice.toFixed(2)
       }
     }
   }

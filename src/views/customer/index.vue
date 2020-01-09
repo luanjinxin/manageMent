@@ -257,7 +257,7 @@ export default {
         const result = await GetPlatformStatis(data)
         if (result.Code === 200) {
           result.Data.sumPrice = (result.Data.sumPrice).toFixed(2)
-          result.Data.fugou = (result.Data.sumCount / result.Data.sumAppuser).toFixed(2)
+          result.Data.fugou = ((result.Data.buyCount / result.Data.sumAppuser)*100).toFixed(2)
           this.result = result.Data
         }
       }
