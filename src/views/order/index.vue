@@ -12,6 +12,10 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="是否刷单">
+          <el-radio v-model="search.IsBrushSingle" label="0">否</el-radio>
+          <el-radio v-model="search.IsBrushSingle" label="1">是</el-radio>
+        </el-form-item>
         <el-form-item label="订单号">
           <el-input v-model="search.keyword" />
         </el-form-item>
@@ -93,7 +97,6 @@
           <template slot-scope="scope">
             <el-button size="mini" type="danger" @click="update(scope.row)">修改</el-button>
             <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-            <p></p>
           </template>
         </el-table-column>
         <!-- <el-table-column align="center" prop="PayTime" label="支付时间" /> -->
@@ -108,8 +111,9 @@
     </el-card>
     <el-dialog title="订单信息" width="500px" :visible.sync="dialogFormVisibles">
       <el-form ref="form" :model="form" label-width="100px">
-        <el-form-item label="平台">
-          <el-input v-model="form.OtherStr" />
+        <el-form-item label="是否刷单">
+          <el-radio v-model="form.IsBrushSingle" label="0">否</el-radio>
+          <el-radio v-model="form.IsBrushSingle" label="1">是</el-radio>
         </el-form-item>
         <el-form-item label="订单号">
           <el-input v-model="form.OrderNo" />
@@ -139,8 +143,11 @@
           <el-input v-model="form.CreateTime" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit">立即修改</el-button>
+          <el-button type="primary" @click="updateSure">立即修改</el-button>
           <el-button @click="dialogFormVisibles = false">取消</el-button>
+          <el-form-item>
+            <p></p>
+          </el-form-item>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -167,9 +174,10 @@ import {
   GetImportResult,
   DelOrder,
   GetProductStatistics,
-  OrderEdit
+  OrderEdit,
+  UpdateOrders,
+  UpdateOrderGood
 } from '@/api/goods'
-import { async } from 'q'
 export default {
   components: { Pagination },
   data() {
@@ -272,7 +280,7 @@ export default {
       ],
       option: [],
       loading: '',
-      search: { keyword: '', type: -1 },
+      search: { keyword: '', type: -1, IsBrushSingle: '0' }, // 是否刷单  0否 1是},
       tableData: [],
       Fail: 0,
       OK: 0,
@@ -295,7 +303,27 @@ export default {
     update(row) {
       this.dialogFormVisibles = true
       this.form = row
-      console.log(JSON.stringify(row))
+      // this.form.IsBrushSingle = this.search.IsBrushSingle
+      this.form.PayTime = this.FormatToDate(this.form.PayTime)
+      this.form.AddTime = this.FormatToDate(this.form.AddTime)
+    },
+    updateSure() {
+      const a = UpdateOrderGood(this.form)
+      const b = UpdateOrders(this.form)
+      Promise.all([a, b])
+        .then(result => {
+          if (result[0].Code === 200 && result[1].Code === 200) {
+            this.$message({
+              type: 'info',
+              message: '修改成功'
+            })
+            this.dialogFormVisibles = false
+            this.getOrderList()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     async getProduct() {
       var that = this
@@ -545,6 +573,7 @@ export default {
       const res = await getOrderList(data)
       if (res.Code === 200) {
         res.Data.map(item => {
+          item.IsBrushSingle = item.IsBrushSingle.toString()
           item.RealPrice = item.RealPrice.toFixed(2)
           item.CreateTime = this.FormatToDate(item.CreateTime)
         })

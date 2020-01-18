@@ -147,3 +147,17 @@ export function GetProductStatistics(data) {
     data
   });
 }
+export function UpdateOrderGood(data) {
+  return request({
+    url: "order/UpdateOrderGood",
+    method: "post",
+    data
+  });
+}
+export function UpdateOrders(data) {
+  return request({
+    url: "order/UpdateOrder",
+    method: "post",
+    data
+  });
+}

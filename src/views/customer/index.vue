@@ -64,16 +64,22 @@
       <div v-if="showSum" slot="header" class="clearfix">
         <span>下单次数:{{ result.sumCount }}--------订单总金额:{{ result.sumPrice }}-------购买人数{{ result.sumAppuser }}-------复购率{{ result.fugou }}%</span>
       </div>
-      <el-table :data="tableData" stripe style="width: 100%">
+      <el-table
+        :data="tableData"
+        :default-sort="{prop: 'SumCount', order: 'descending'}"
+        @sort-change="sortChange"
+        stripe
+        style="width: 100%"
+      >
         <el-table-column align="center" width="80px" prop="Type" label="平台" />
         <el-table-column align="center" prop="BuyUserName" width="180px" label="会员名" />
         <el-table-column align="center" prop="Name" label="姓名" />
         <el-table-column align="center" prop="Phone" label="电话" />
-        <el-table-column align="center" width="80px" prop="SumCount" label="购买次数" />
-        <el-table-column align="center" width="80px" prop="SumPrice" label="购买金额" />
+        <el-table-column align="center" width="180px" sortable prop="SumCount" label="购买次数" />
+        <el-table-column align="center" width="180px" sortable prop="SumPrice" label="购买金额" />
         <el-table-column align="center" show-overflow-tooltip prop="ReceiveAddress" label="收件人地址" />
         <el-table-column align="center" prop="BuyLastTime" label="最后购买时间" />
-        <el-table-column align="center" prop="BuyHistory" label="购买商品" />
+        <!-- <el-table-column align="center" prop="BuyHistory" label="购买商品" /> -->
       </el-table>
       <pagination
         v-show="pageCount > 0"
@@ -98,13 +104,13 @@ import {
 } from '@/api/goods'
 export default {
   components: { Pagination },
-  data () {
+  data() {
     return {
       pickerOptions: {
         shortcuts: [
           {
             text: '最近一周',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
@@ -113,7 +119,7 @@ export default {
           },
           {
             text: '最近一个月',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
@@ -122,7 +128,7 @@ export default {
           },
           {
             text: '最近三个月',
-            onClick (picker) {
+            onClick(picker) {
               const end = new Date()
               const start = new Date()
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
@@ -135,8 +141,14 @@ export default {
       result: {},
       search: { keyword: '', type: -1 },
       option: [],
-      option1: [{ id: 0, name: '>=' }, { id: 1, name: '<' }],
-      option2: [{ id: 0, name: '>=' }, { id: 1, name: '<' }],
+      option1: [
+        { id: 0, name: '>=' },
+        { id: 1, name: '<' }
+      ],
+      option2: [
+        { id: 0, name: '>=' },
+        { id: 1, name: '<' }
+      ],
       options: [
         {
           value: -1,
@@ -210,17 +222,21 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.getSelectList()
     this.getList()
   },
   methods: {
-    async creatDate () {
+    sortChange(column, prop, order) {
+      console.log(column.prop) //prop标签 => nickname
+      console.log(column.order) //descending降序、ascending升序
+    },
+    async creatDate() {
       // await UpdateOrder({})
       // await AddAppUser({})
       await UpdateAppUserStatis({})
     },
-    FormatToDate (val) {
+    FormatToDate(val) {
       if (val != null) {
         var date = new Date(
           parseInt(val.replace('/Date(', '').replace(')/', ''), 10)
@@ -229,11 +245,11 @@ export default {
       }
       return ''
     },
-    async setCustomerList () {
+    async setCustomerList() {
       const res = await UpdateAppUserStatis({})
       console.log(res)
     },
-    async getList () {
+    async getList() {
       var data = this.search
       if (this.value2.length > 0) {
         data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
@@ -248,6 +264,7 @@ export default {
         res.Data.map(item => {
           item.BuyLastTime = this.FormatToDate(item.BuyLastTime)
           item.Type = this.type[item.Type]
+          item.SumPrice = item.SumPrice.toFixed(2)
         })
         this.tableData = res.Data
         this.pageCount = res.Count
@@ -256,13 +273,16 @@ export default {
         this.showSum = true
         const result = await GetPlatformStatis(data)
         if (result.Code === 200) {
-          result.Data.sumPrice = (result.Data.sumPrice).toFixed(2)
-          result.Data.fugou = ((result.Data.buyCount / result.Data.sumAppuser)*100).toFixed(2)
+          result.Data.sumPrice = result.Data.sumPrice.toFixed(2)
+          result.Data.fugou = (
+            (result.Data.buyCount / result.Data.sumAppuser) *
+            100
+          ).toFixed(2)
           this.result = result.Data
         }
       }
     },
-    async getSelectList () {
+    async getSelectList() {
       var data = {
         pageIndex: 1,
         pageSize: 200,
