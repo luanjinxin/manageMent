@@ -55,6 +55,20 @@
           prop="TM_Sku"
           label="天猫sku"
         />
+        <el-table-column
+          align="center"
+          width="150px"
+          show-overflow-tooltip
+          prop="TMUCS_Sku"
+          label="天猫sku"
+        />
+        <el-table-column
+          align="center"
+          width="150px"
+          show-overflow-tooltip
+          prop="TMAVA_Sku"
+          label="天猫sku"
+        />
         <el-table-column align="center" width="100px" prop="SN_Sku" label="苏宁sku" />
         <el-table-column align="center" width="100px" prop="BM_Sku" label="斑马sku" />
         <el-table-column align="center" width="100px" prop="ICBC_Sku" label="ICbCsku" />
@@ -95,6 +109,12 @@
         </el-form-item>
         <el-form-item label="天猫sku">
           <el-input v-model="form.TM_Sku" />
+        </el-form-item>
+         <el-form-item label="天猫UCSsku">
+          <el-input v-model="form.TMUCS_Sku" />
+        </el-form-item>
+         <el-form-item label="天猫AVAsku">
+          <el-input v-model="form.TMAVA_Sku" />
         </el-form-item>
         <el-form-item label="苏宁sku">
           <el-input v-model="form.SN_Sku" />
@@ -182,7 +202,7 @@ import {
   delGoods,
   getGoodsList,
   JoinProduct
-} from '@/api/goods'
+} from '@/api/goods2'
 export default {
   components: { Pagination },
   data() {
@@ -212,6 +232,8 @@ export default {
         Sku: '',
         JD_Sku: '',
         TM_Sku: '',
+        TMUCS_Sku: '',
+        TMAVA_Sku: '',
         SN_Sku: '',
         BM_Sku: '',
         ICBC_Sku: '',
@@ -314,6 +336,8 @@ export default {
       this.form.Sku = row.Sku
       this.form.JD_Sku = row.JD_Sku
       this.form.TM_Sku = row.TM_Sku
+      this.form.TMAVA_Sku = row.TMAVA_Sku
+      this.form.TMUCS_Sku = row.TMUCS_Sku
       this.form.SN_Sku = row.SN_Sku
       this.form.BM_Sku = row.BM_Sku
       this.form.ICBC_Sku = row.ICBC_Sku

@@ -45,7 +45,8 @@
           <el-button type="primary" @click="getProduct">查询所有商品</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="exportData">导出</el-button>
+          <el-button type="primary" @click="exportData">导出订单</el-button>
+          <el-button type="primary" @click="exportOrder">导出报表</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="delAll">删除所有</el-button>
@@ -71,7 +72,7 @@
             <el-button size="medium" type="primary" @click="setType(7,0,1)">小红书(前)</el-button>
             <el-button size="medium" type="primary" @click="setType(7,0,0)">小红书(后)</el-button>
             <el-button size="medium" type="primary" @click="setType(8,1)">考拉</el-button>
-            <el-button size="medium" type="primary" @click="setType(9,0)">蜜芽</el-button>
+            <el-button size="medium" type="primary" @click="setType(9,1)">蜜芽</el-button>
             <el-button size="medium" type="primary" @click="setType(10,1)">寺库</el-button>
           </el-upload>
         </el-form-item>
@@ -394,7 +395,8 @@ export default {
       })
         .then(async () => {
           var check = []
-          check.push(row.OrderList.OrderNo)
+          console.log('???')
+          check.push(row.OrderNo)
           console.log(JSON.stringify(row))
           const res = await DelOrder({ orderNo: check, isAll: 0 })
           if (res.Code === 200) {
@@ -428,6 +430,45 @@ export default {
     },
     goRepeatList() {
       this.$router.push('/order/repeatOrder')
+    },
+    async exportOrder() {
+      var data = this.search
+      if (this.value2.length > 0) {
+        data.sDate = `${moment(this.value2[0]).format('YYYY-MM-DD') +
+          ' 00:00:00'}`
+        data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
+          ' 23:59:59'}`
+      }
+      data.pageIndex = this.pageNumber
+      data.pageSize = this.pageSize
+      data.IsMultiple = -1
+      axios({
+        // 用axios发送post请求
+        method: 'post',
+        url: 'http://excel.vitarealm.cn/order/ExportPrudcutStatistics', // 请求地址
+        data: data, // 参数
+        responseType: 'blob', // 表明返回服务器返回的数据类型
+        headers: {
+          Authorization: getToken()
+        }
+      }).then(res => {
+        // 处理返回的文件流
+        var blob = new Blob([res.data], {
+          type:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+        })
+        var contentDisposition = res.headers['content-disposition']
+        var filename = '订单.xls'
+        var downloadElement = document.createElement('a')
+        var href = window.URL.createObjectURL(blob) // 创建下载的链接
+        downloadElement.style.display = 'none'
+        downloadElement.href = href
+        downloadElement.download = filename // 下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() // 点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href) // 释放掉blob对象
+      })
     },
     async exportData() {
       var data = this.search
@@ -520,6 +561,9 @@ export default {
       }
       if (this.dataType == 8) {
         data.isRecordMultiple = 1
+      }
+      if (this.dataType == 3 || this.dataType == 9) {
+        data.isCumulativePrice = 1
       }
       const res = ImportData(data)
       this.loading = this.$loading({

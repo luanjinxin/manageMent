@@ -32,15 +32,27 @@ export const constantRoutes = [
     children: [
       {
         path: 'goodslist',
-        name: '商品管理',
+        name: 'VR商品管理',
         component: () => import('@/views/goods/index'),
-        meta: { title: '商品管理', icon: '' }
+        meta: { title: 'VR商品管理', icon: '' }
       },
       {
         path: 'giving',
-        name: '赠品管理',
+        name: 'VR赠品管理',
         component: () => import('@/views/goods/giving'),
-        meta: { title: '赠品管理', icon: '' }
+        meta: { title: 'VR赠品管理', icon: '' }
+      },
+      {
+        path: 'goodslist2',
+        name: 'HBY商品管理',
+        component: () => import('@/views/goods2/index'),
+        meta: { title: 'HBY商品管理', icon: '' }
+      },
+      {
+        path: 'giving2',
+        name: 'HBY赠品管理',
+        component: () => import('@/views/goods2/giving'),
+        meta: { title: 'HBY赠品管理', icon: '' }
       }
     ]
   },
