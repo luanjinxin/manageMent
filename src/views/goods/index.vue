@@ -63,6 +63,7 @@
         <el-table-column align="center" width="100px" prop="KL_Sku" label="考拉sku" />
         <el-table-column align="center" width="100px" prop="MY_Sku" label="蜜芽sku" />
         <el-table-column align="center" width="100px" prop="SK_Sku" label="寺库sku" />
+        <el-table-column align="center" width="100px" prop="HZW_Sku" label="孩子王sku" />
         <el-table-column align="center" prop="IsMultiples" width="100px" label="是否关联" />
         <!-- <el-table-column align="center" prop="JoinProductID" label="关联商品id" /> -->
         <!-- <el-table-column align="center" width="100px" prop="JoinProduct.InternalName" label="关联商品" />
@@ -119,6 +120,10 @@
         </el-form-item>
         <el-form-item label="寺库sku">
           <el-input v-model="form.SK_Sku" />
+        </el-form-item>
+         </el-form-item>
+           <el-form-item label="孩子王sku">
+          <el-input v-model="form.HZW_Sku" />
         </el-form-item>
         <!-- <el-form-item label="是否关联">
           <el-switch v-model="form.IsMultiple" />
@@ -220,6 +225,7 @@ export default {
         KL_Sku: '',
         MY_Sku: '',
         SK_Sku: '',
+        HZW_Sku: '',
         // IsMultiple: false,
         // JoinProductID: 0,
         // JoinProductSum: 0,
@@ -311,18 +317,19 @@ export default {
       this.isEdit = true
       this.form.InternalName = row.InternalName
       this.form.InternalEnglishName = row.InternalEnglishName
-      this.form.Sku = row.Sku
-      this.form.JD_Sku = row.JD_Sku
-      this.form.TM_Sku = row.TM_Sku
-      this.form.SN_Sku = row.SN_Sku
-      this.form.BM_Sku = row.BM_Sku
-      this.form.ICBC_Sku = row.ICBC_Sku
-      this.form.PDD_Sku = row.PDD_Sku
-      this.form.XHS_Sku = row.XHS_Sku
-      this.form.KL_Sku = row.KL_Sku
-      this.form.MY_Sku = row.MY_Sku
-      this.form.SK_Sku = row.SK_Sku
+      this.form.Sku = row.Sku || ''
+      this.form.JD_Sku = row.JD_Sku || ''
+      this.form.TM_Sku = row.TM_Sku || ''
+      this.form.SN_Sku = row.SN_Sku || ''
+      this.form.BM_Sku = row.BM_Sku || ''
+      this.form.ICBC_Sku = row.ICBC_Sku || ''
+      this.form.PDD_Sku = row.PDD_Sku || ''
+      this.form.XHS_Sku = row.XHS_Sku || ''
+      this.form.KL_Sku = row.KL_Sku || ''
+      this.form.MY_Sku = row.MY_Sku || ''
+      this.form.SK_Sku = row.SK_Sku || ''
       this.form.IsMultiple = row.IsMultiple
+      this.form.HZW_Sku = row.HZW_Sku || ''
       // this.form.JoinProductID = row.JoinProductID
       // this.form.JoinProductSum = row.JoinProductSum
       this.form.Price = row.Price

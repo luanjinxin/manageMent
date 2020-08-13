@@ -23,7 +23,7 @@
     <div class="h20" />
     <el-card class="box-card">
       <el-table :data="tableData" stripe style="width: 100%">
-         <el-table-column align="center" width="300px" label="操作">
+        <el-table-column align="center" width="300px" label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleAbout(scope.row)">关联</el-button>
             <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
@@ -60,14 +60,14 @@
           width="150px"
           show-overflow-tooltip
           prop="TMUCS_Sku"
-          label="天猫sku"
+          label="天猫USCsku"
         />
         <el-table-column
           align="center"
           width="150px"
           show-overflow-tooltip
           prop="TMAVA_Sku"
-          label="天猫sku"
+          label="天猫AVAsku"
         />
         <el-table-column align="center" width="100px" prop="SN_Sku" label="苏宁sku" />
         <el-table-column align="center" width="100px" prop="BM_Sku" label="斑马sku" />
@@ -77,6 +77,7 @@
         <el-table-column align="center" width="100px" prop="KL_Sku" label="考拉sku" />
         <el-table-column align="center" width="100px" prop="MY_Sku" label="蜜芽sku" />
         <el-table-column align="center" width="100px" prop="SK_Sku" label="寺库sku" />
+        <el-table-column align="center" width="100px" prop="BBW_Sku" label="贝贝网sku" />
         <el-table-column align="center" prop="IsMultiples" width="100px" label="是否关联" />
         <!-- <el-table-column align="center" prop="JoinProductID" label="关联商品id" /> -->
         <!-- <el-table-column align="center" width="100px" prop="JoinProduct.InternalName" label="关联商品" />
@@ -110,10 +111,10 @@
         <el-form-item label="天猫sku">
           <el-input v-model="form.TM_Sku" />
         </el-form-item>
-         <el-form-item label="天猫UCSsku">
+        <el-form-item label="天猫UCSsku">
           <el-input v-model="form.TMUCS_Sku" />
         </el-form-item>
-         <el-form-item label="天猫AVAsku">
+        <el-form-item label="天猫AVAsku">
           <el-input v-model="form.TMAVA_Sku" />
         </el-form-item>
         <el-form-item label="苏宁sku">
@@ -139,6 +140,9 @@
         </el-form-item>
         <el-form-item label="寺库sku">
           <el-input v-model="form.SK_Sku" />
+        </el-form-item>
+        <el-form-item label="贝贝网sku">
+          <el-input v-model="form.BBW_Sku" />
         </el-form-item>
         <!-- <el-form-item label="是否关联">
           <el-switch v-model="form.IsMultiple" />
@@ -232,6 +236,7 @@ export default {
         Sku: '',
         JD_Sku: '',
         TM_Sku: '',
+        HZW_Sku: '',
         TMUCS_Sku: '',
         TMAVA_Sku: '',
         SN_Sku: '',
@@ -242,6 +247,7 @@ export default {
         KL_Sku: '',
         MY_Sku: '',
         SK_Sku: '',
+        BBW_Sku: '',
         // IsMultiple: false,
         // JoinProductID: 0,
         // JoinProductSum: 0,
@@ -333,20 +339,22 @@ export default {
       this.isEdit = true
       this.form.InternalName = row.InternalName
       this.form.InternalEnglishName = row.InternalEnglishName
-      this.form.Sku = row.Sku
-      this.form.JD_Sku = row.JD_Sku
-      this.form.TM_Sku = row.TM_Sku
-      this.form.TMAVA_Sku = row.TMAVA_Sku
-      this.form.TMUCS_Sku = row.TMUCS_Sku
-      this.form.SN_Sku = row.SN_Sku
-      this.form.BM_Sku = row.BM_Sku
-      this.form.ICBC_Sku = row.ICBC_Sku
-      this.form.PDD_Sku = row.PDD_Sku
-      this.form.XHS_Sku = row.XHS_Sku
-      this.form.KL_Sku = row.KL_Sku
-      this.form.MY_Sku = row.MY_Sku
-      this.form.SK_Sku = row.SK_Sku
+      this.form.Sku = row.Sku || ''
+      this.form.JD_Sku = row.JD_Sku || ''
+      this.form.TM_Sku = row.TM_Sku || ''
+      this.form.TMAVA_Sku = row.TMAVA_Sku || ''
+      this.form.TMUCS_Sku = row.TMUCS_Sku || ''
+      this.form.SN_Sku = row.SN_Sku || ''
+      this.form.BM_Sku = row.BM_Sku || ''
+      this.form.ICBC_Sku = row.ICBC_Sku || ''
+      this.form.PDD_Sku = row.PDD_Sku || ''
+      this.form.XHS_Sku = row.XHS_Sku || ''
+      this.form.KL_Sku = row.KL_Sku || ''
+      this.form.MY_Sku = row.MY_Sku || ''
+      this.form.SK_Sku = row.SK_Sku || ''
+      this.form.HZW_Sku = row.HZW_Sku || ''
       this.form.IsMultiple = row.IsMultiple
+      this.form.BBW_Sku = row.BBW_Sku || ''
       // this.form.JoinProductID = row.JoinProductID
       // this.form.JoinProductSum = row.JoinProductSum
       this.form.Price = row.Price

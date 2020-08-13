@@ -1,104 +1,122 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Layout from '@/layout'
-Vue.use(Router)
+import Vue from "vue";
+import Router from "vue-router";
+import Layout from "@/layout";
+Vue.use(Router);
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
+    path: "/login",
+    component: () => import("@/views/login/index"),
     hidden: true
   },
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
+    redirect: "/dashboard",
     children: [
       {
-        path: 'dashboard',
-        name: '主页',
-        component: () => import('@/views/dashboard/index'),
-        meta: { title: '主页', icon: 'el-icon-tickets' }
+        path: "dashboard",
+        name: "主页",
+        component: () => import("@/views/dashboard/index"),
+        meta: { title: "主页", icon: "el-icon-tickets" }
       }
     ]
   },
   {
-    path: '/goods',
+    path: "/goods",
     component: Layout,
-    redirect: '/goods/goodslist',
+    redirect: "/goods/goodslist",
     meta: {
-      title: '商品管理',
-      icon: 'el-icon-goods'
+      title: "商品管理",
+      icon: "el-icon-goods"
     },
     children: [
       {
-        path: 'goodslist',
-        name: 'VR商品管理',
-        component: () => import('@/views/goods/index'),
-        meta: { title: 'VR商品管理', icon: '' }
+        path: "goodslist",
+        name: "VR商品管理",
+        component: () => import("@/views/goods/index"),
+        meta: { title: "VR商品管理", icon: "" }
       },
       {
-        path: 'giving',
-        name: 'VR赠品管理',
-        component: () => import('@/views/goods/giving'),
-        meta: { title: 'VR赠品管理', icon: '' }
+        path: "giving",
+        name: "VR赠品管理",
+        component: () => import("@/views/goods/giving"),
+        meta: { title: "VR赠品管理", icon: "" }
       },
       {
-        path: 'goodslist2',
-        name: 'HBY商品管理',
-        component: () => import('@/views/goods2/index'),
-        meta: { title: 'HBY商品管理', icon: '' }
+        path: "goodslist2",
+        name: "HB商品管理",
+        component: () => import("@/views/goods2/index"),
+        meta: { title: "HB商品管理", icon: "" }
       },
       {
-        path: 'giving2',
-        name: 'HBY赠品管理',
-        component: () => import('@/views/goods2/giving'),
-        meta: { title: 'HBY赠品管理', icon: '' }
+        path: "giving2",
+        name: "HB赠品管理",
+        component: () => import("@/views/goods2/giving"),
+        meta: { title: "HB赠品管理", icon: "" }
       }
     ]
   },
   {
-    path: '/order',
+    path: "/order",
     component: Layout,
-    redirect: '/order/orderlist',
+    redirect: "/order/orderlist",
     meta: {
-      title: '订单管理',
-      icon: 'el-icon-star-on'
+      title: "订单管理",
+      icon: "el-icon-star-on"
     },
     children: [
       {
-        path: 'orderlist',
-        name: '订单管理',
-        component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: '' }
+        path: "orderlist",
+        name: "VR订单管理",
+        component: () => import("@/views/order/index"),
+        meta: { title: "VR订单管理", icon: "" }
       },
       {
-        path: 'repeatOrder',
-        name: '重复订单管理',
-        component: () => import('@/views/repeatOrder/index'),
-        meta: { title: '重复订单管理', icon: '' }
+        path: "repeatOrder",
+        name: "VR重复订单管理",
+        component: () => import("@/views/repeatOrder/index"),
+        meta: { title: "VR重复订单管理", icon: "" }
+      },
+      {
+        path: "orderlist2",
+        name: "HB订单管理",
+        component: () => import("@/views/order2/index"),
+        meta: { title: "HB订单管理", icon: "" }
+      },
+      {
+        path: "repeatOrder2",
+        name: "HB重复订单管理",
+        component: () => import("@/views/repeatOrder2/index"),
+        meta: { title: "HB重复订单管理", icon: "" }
       }
     ]
   },
   {
-    path: '/customer',
+    path: "/customer",
     component: Layout,
-    redirect: '/customer/customerList',
+    redirect: "/customer/customerList",
     meta: {
-      title: '顾客管理',
-      icon: 'el-icon-goods'
+      title: "顾客管理",
+      icon: "el-icon-goods"
     },
     children: [
       {
-        path: 'customerList',
-        name: '顾客管理',
-        component: () => import('@/views/customer/index'),
-        meta: { title: '顾客管理', icon: 'el-icon-goods' }
+        path: "customerList",
+        name: "VR顾客管理",
+        component: () => import("@/views/customer/index"),
+        meta: { title: "VR顾客管理", icon: "el-icon-goods" }
+      },
+      {
+        path: "customerList2",
+        name: "HB顾客管理",
+        component: () => import("@/views/customer2/index"),
+        meta: { title: "HB顾客管理", icon: "el-icon-goods" }
       }
     ]
   },
   {
-    path: '/404',
-    component: () => import('@/views/404'),
+    path: "/404",
+    component: () => import("@/views/404"),
     hidden: true
   }
   // {
@@ -160,19 +178,19 @@ export const constantRoutes = [
   //     }
   //   ]
   // }
-]
+];
 
 const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes
-  })
+  });
 
-const router = createRouter()
+const router = createRouter();
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;

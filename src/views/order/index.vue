@@ -74,6 +74,7 @@
             <el-button size="medium" type="primary" @click="setType(8,1)">考拉</el-button>
             <el-button size="medium" type="primary" @click="setType(9,1)">蜜芽</el-button>
             <el-button size="medium" type="primary" @click="setType(10,1)">寺库</el-button>
+            <el-button size="medium" type="primary" @click="setType(11,1)">孩子王</el-button>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -277,6 +278,10 @@ export default {
         {
           value: 10,
           label: '寺库'
+        },
+        {
+          value: 11,
+          label: '孩子王'
         }
       ],
       option: [],
@@ -438,6 +443,19 @@ export default {
           ' 00:00:00'}`
         data.eDate = `${moment(this.value2[1]).format('YYYY-MM-DD') +
           ' 23:59:59'}`
+      } else {
+        this.$message({
+          type: 'info',
+          message: '请选择时间'
+        })
+        return false
+      }
+      if (this.search.type === -1) {
+        this.$message({
+          type: 'info',
+          message: '请选择平台'
+        })
+        return false
       }
       data.pageIndex = this.pageNumber
       data.pageSize = this.pageSize
