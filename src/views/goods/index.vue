@@ -23,7 +23,7 @@
     <div class="h20" />
     <el-card class="box-card">
       <el-table :data="tableData" stripe style="width: 100%">
-         <el-table-column align="center" width="300px" label="操作">
+        <el-table-column align="center" width="300px" label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="primary" @click="handleAbout(scope.row)">关联</el-button>
             <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
@@ -121,13 +121,12 @@
         <el-form-item label="寺库sku">
           <el-input v-model="form.SK_Sku" />
         </el-form-item>
-         </el-form-item>
-           <el-form-item label="孩子王sku">
+        <el-form-item label="孩子王sku">
           <el-input v-model="form.HZW_Sku" />
         </el-form-item>
-        <!-- <el-form-item label="是否关联">
+        <el-form-item label="是否关联">
           <el-switch v-model="form.IsMultiple" />
-        </el-form-item>-->
+        </el-form-item>
         <!-- <el-form-item label="关联商品id">
           <el-select v-model="form.JoinProductID" filterable placeholder="请选择商品">
             <el-option
@@ -186,7 +185,7 @@ import {
   editGoods,
   delGoods,
   getGoodsList,
-  JoinProduct
+  JoinProduct,
 } from '@/api/goods'
 export default {
   components: { Pagination },
@@ -198,7 +197,7 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        sort: '+id'
+        sort: '+id',
       },
       JoinProductID: 0,
       dialogFormVisible: false,
@@ -226,13 +225,13 @@ export default {
         MY_Sku: '',
         SK_Sku: '',
         HZW_Sku: '',
-        // IsMultiple: false,
+        IsMultiple: false,
         // JoinProductID: 0,
         // JoinProductSum: 0,
-        Price: 0
+        Price: 0,
       },
       search: { keyword: '' },
-      tableData: []
+      tableData: [],
     }
   },
   created() {
@@ -251,7 +250,7 @@ export default {
       var data = {
         Count: 0,
         productID: this.JoinProductID,
-        name: this.$refs.select.selectedLabel
+        name: this.$refs.select.selectedLabel,
       }
       this.checkList.push(data)
     },
@@ -265,22 +264,22 @@ export default {
     async submits() {
       const newlist = []
       var check = JSON.parse(JSON.stringify(this.checkList))
-      check.map(item => {
+      check.map((item) => {
         var d = {
           Count: item.Count,
-          productID: item.productID
+          productID: item.productID,
         }
         newlist.push(d)
       })
       const data = {
         productList: newlist,
-        productID: this.ProductID
+        productID: this.ProductID,
       }
       const res = await JoinProduct(data)
       if (res.Code === 200) {
         this.$message({
           type: 'info',
-          message: '关联成功'
+          message: '关联成功',
         })
         this.dialogFormVisibles = false
         this.getGoodsList()
@@ -295,16 +294,16 @@ export default {
       const data = {
         productID: row.ProductID,
         pageIndex: 1,
-        pageSize: 100
+        pageSize: 100,
       }
       const res = await getJoinList(data)
       if (res.Code === 200) {
         if (res.Data.length > 0) {
-          res.Data.map(item => {
+          res.Data.map((item) => {
             var data = {
               Count: item.Count,
               productID: item.ProductID,
-              name: item.InternalName
+              name: item.InternalName,
             }
             this.checkList.push(data)
           })
@@ -344,7 +343,7 @@ export default {
       if (res.Code === 200) {
         this.$message({
           type: 'info',
-          message: '删除成功'
+          message: '删除成功',
         })
         this.getGoodsList()
       }
@@ -379,7 +378,7 @@ export default {
       var data = {
         pageIndex: 1,
         pageSize: 200,
-        IsMultiple: 0
+        IsMultiple: 0,
       }
       const res = await getGoodsList(data)
       if (res.Code === 200) {
@@ -394,7 +393,7 @@ export default {
       data.IsMultiple = -1
       const res = await getGoodsList(data)
       if (res.Code === 200) {
-        res.Data.map(item => {
+        res.Data.map((item) => {
           if (item.IsMultiple == 0) {
             item.IsMultiples = '否'
           } else {
@@ -404,8 +403,8 @@ export default {
         this.tableData = res.Data
         this.pageCount = res.Count
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>
